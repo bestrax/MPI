@@ -8,8 +8,20 @@
 
 #include <iostream>
 
+#include "FileManager.hpp"
+
+using namespace std;
+
 int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
+    
+    FileManager file;
+    Automaton *a = NULL;
+    
+    a = file.load("exemples/a1.txt");
+    
+    cout<<*a<<endl;
+    
+    cout<< "Is synchronous ? : "<<a->isSynchronous()<<endl;
+    
     return 0;
 }

@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		0B3E6DEE1CE7608F00DFCC8E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B3E6DED1CE7608F00DFCC8E /* main.cpp */; };
+		0B3E6DF61CE7613C00DFCC8E /* State.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B3E6DF41CE7613C00DFCC8E /* State.cpp */; };
+		0B3E6DF91CE7649800DFCC8E /* FileManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B3E6DF71CE7649800DFCC8E /* FileManager.cpp */; };
+		0B3E6E021CE765E600DFCC8E /* Automaton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B3E6E001CE765E600DFCC8E /* Automaton.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +28,12 @@
 /* Begin PBXFileReference section */
 		0B3E6DEA1CE7608F00DFCC8E /* TAI */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TAI; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B3E6DED1CE7608F00DFCC8E /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		0B3E6DF41CE7613C00DFCC8E /* State.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = State.cpp; sourceTree = "<group>"; };
+		0B3E6DF51CE7613C00DFCC8E /* State.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = State.hpp; sourceTree = "<group>"; };
+		0B3E6DF71CE7649800DFCC8E /* FileManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileManager.cpp; sourceTree = "<group>"; };
+		0B3E6DF81CE7649800DFCC8E /* FileManager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FileManager.hpp; sourceTree = "<group>"; };
+		0B3E6E001CE765E600DFCC8E /* Automaton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Automaton.cpp; sourceTree = "<group>"; };
+		0B3E6E011CE765E600DFCC8E /* Automaton.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Automaton.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +67,12 @@
 			isa = PBXGroup;
 			children = (
 				0B3E6DED1CE7608F00DFCC8E /* main.cpp */,
+				0B3E6E001CE765E600DFCC8E /* Automaton.cpp */,
+				0B3E6E011CE765E600DFCC8E /* Automaton.hpp */,
+				0B3E6DF71CE7649800DFCC8E /* FileManager.cpp */,
+				0B3E6DF81CE7649800DFCC8E /* FileManager.hpp */,
+				0B3E6DF41CE7613C00DFCC8E /* State.cpp */,
+				0B3E6DF51CE7613C00DFCC8E /* State.hpp */,
 			);
 			path = TAI;
 			sourceTree = "<group>";
@@ -118,6 +133,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0B3E6DF91CE7649800DFCC8E /* FileManager.cpp in Sources */,
+				0B3E6DF61CE7613C00DFCC8E /* State.cpp in Sources */,
+				0B3E6E021CE765E600DFCC8E /* Automaton.cpp in Sources */,
 				0B3E6DEE1CE7608F00DFCC8E /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
