@@ -17,7 +17,7 @@ State::State(int name){
     State::pool.push_back(this);
 }
 
-State::~State(){
+State::~State(){    
     for(int i=0; i<State::pool.size();i++){
         if(State::pool[i] == this)
             State::pool.erase(State::pool.begin()+i);
@@ -45,6 +45,23 @@ void State::addTarget(char symbol, State* target){
     }
     
     
+}
+
+int State::getName(){
+    return this->name;
+}
+
+vector<int> State::getTargerts(char symbol){
+    
+    vector<int> name;
+    for(int i=0;i<transitions.size();i++){
+        if(transitions[i].symbol == symbol){
+            for(int j=0;j<transitions[i].targets.size();j++)
+                name.push_back(transitions[i].targets[j]->name);
+        }
+    }
+    
+    return name;
 }
 
 State* State::getState(int name){
@@ -94,4 +111,8 @@ bool State::isSynchronous(){
     }
     
     return true;
+}
+
+vector <State*> State::getPool(){
+    return State::pool;
 }

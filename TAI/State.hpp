@@ -26,10 +26,13 @@ public:
     State(int name);
     ~State();
     void addTarget(char symbol, State* target);
+    int getName();
+    vector<int> getTargerts(char symbol);
     State* getState(int name);
     static string showAll();
     static void sortTransitions();
     static bool isSynchronous();
+    vector <State*> getPool();
     
     
     

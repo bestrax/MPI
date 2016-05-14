@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <vector>
 #include <iostream> 
+#include <set>
 #include "State.hpp"
 
 using namespace std;
@@ -31,15 +32,22 @@ public:
     State* getState(int name);
     bool addTransition(int origin, char symbol, int destination);
     bool isSynchronous();
+    static bool sortDecrease(int a, int b);
+    void determize();
     
     friend ostream &operator<<(ostream& os, const Automaton& a);
     
     
     
-protected:
+private:
     int symbols;
     vector< State* > entries;
     vector< State* > exits;
+    
+    string determinizeGetName(vector<int> &a);
+    void determinizeUnique(vector<int> &a);
+    
+    
     
 };
 

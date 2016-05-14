@@ -21,7 +21,11 @@ int main(int argc, const char * argv[]) {
     
     cout<<*a<<endl;
     
-    cout<< "Is synchronous ? : "<<a->isSynchronous()<<endl;
+    cout<< "Is synchronous ? : "<<a->isSynchronous()<<endl<<endl;
+    
+    a->determize();
+    
+    cout<<endl<<endl;
     
     return 0;
 }

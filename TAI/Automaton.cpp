@@ -84,6 +84,115 @@ bool Automaton::isSynchronous(){
     return State::isSynchronous();
 }
 
+bool Automaton::sortDecrease(int a, int b){
+    return b > a;
+}
+
+void Automaton::determize(){
+    
+    if(entries.size() == 0 || !isSynchronous()){
+        cout<<"Impossible de determiniser"<<endl;
+        return;
+    }
+    
+    vector<State*> oldPool = entries[0]->getPool();
+    
+    
+    vector<State*> manipulate = entries;
+    vector<vector<int>> name;
+    vector<vector<vector<int>>> transitions;
+    vector<vector<int>> toProcess;
+    vector<string> nameState;
+    string temp;
+    
+    int j=0;
+    
+    cout<<"\nDeterminisation"<<endl;
+    
+    while(manipulate.size() != 0){
+    
+        name.push_back(vector<int>());
+        
+        for(int i=0;i<manipulate.size();i++){
+            name[j].push_back(manipulate[i]->getName());
+        }
+        determinizeUnique(name[j]);
+        
+        sort(name[j].begin(), name[j].end(), sortDecrease);
+        
+        transitions.push_back(vector<vector<int>>());
+        
+        for(int k=0;k<symbols;k++){
+            
+            transitions[j].push_back(vector<int>());
+            
+            for(int i=0;i<manipulate.size();i++){
+                vector<int> temp2 = manipulate[i]->getTargerts('a'+k);
+                transitions[j][k].insert( transitions[j][k].end(), temp2.begin(), temp2.end() );
+            }
+            
+            determinizeUnique(transitions[j][k]);
+        }
+        
+        
+        temp = determinizeGetName(name[j]);
+        if(find(nameState.begin(), nameState.end(), temp) == nameState.end())
+            nameState.push_back(temp);
+        
+        
+        cout<<nameState[j] << " | ";
+        
+        for(int k=0; k<transitions[j].size();k++){
+            cout<<(char)('a'+k)<< " : ";
+            for(int i=0; i<transitions[j][k].size();i++)
+                cout<<transitions[j][k][i] << " ";
+            
+            temp = determinizeGetName(transitions[j][k]);
+            if(find(nameState.begin(), nameState.end(), temp) == nameState.end()){
+                nameState.push_back(temp);
+                toProcess.push_back(transitions[j][k]);
+            }
+        }
+        
+        cout<<endl;
+        
+        manipulate.clear();
+        
+       if(toProcess.size()>0){
+            for(int i=0;i<toProcess[0].size();i++){
+                manipulate.push_back(entries[0]->getState(toProcess[0][i]));
+            }
+           toProcess.erase(toProcess.begin());
+        }
+        j++;
+    }
+
+    
+    //entry = new State(j);
+    
+    
+}
+
+string Automaton::determinizeGetName(vector<int> &a){
+    string nameState = "";
+    
+    for(int i=0;i<a.size();i++)
+        nameState += to_string(a[i]);
+    
+    return nameState;
+}
+
+void Automaton::determinizeUnique(vector<int> &a){
+    set<int> b;
+    
+    for(vector<int>::iterator i=a.begin(); i!=a.end();){
+        if(!b.insert(*i).second)
+            i = a.erase(i);
+        else
+            i++;
+    }
+}
+
 ostream &operator<<(ostream& os, const Automaton& a){
     return os << State::showAll();
 }
