@@ -17,6 +17,8 @@ int main(int argc, const char * argv[]) {
     FileManager file;
     Automaton *a = NULL;
     
+    cout<<"Bonjour Malik"<<endl;
+    
     a = file.load("exemples/a2.txt");
     
     cout<<*a<<endl;
