@@ -11,8 +11,10 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <algorithm>
 #include <string>
 #include <vector>
+#include <sstream>
 
 using namespace std;
 
@@ -31,7 +33,7 @@ public:
     int getNbTargets();
     State* getState(int name);
     static string showAll();
-    static vector<vector<int>> getAllTransitions();
+    static vector< vector<int> > getAllTransitions();
     static void sortTransitions();
     static bool isSynchronous();
     vector <State*> getPool();
@@ -53,6 +55,16 @@ struct destination {
     char symbol;
 };
 
+// In order to patch old GCC problems of compilation on to_string
+namespace patch
+{
+    template < typename T > std::string to_string( const T& n )
+    {
+        std::ostringstream stm ;
+        stm << n ;
+        return stm.str() ;
+    }
+}
 
 
 #endif /* State_hpp */

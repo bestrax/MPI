@@ -92,10 +92,10 @@ string State::showAll(){
     State::sortTransitions();
     
     for(int i=0; i<State::pool.size();i++){
-        os +=  to_string(State::pool[i]->name) + " | ";
+        os +=  patch::to_string(State::pool[i]->name) + " | ";
         for(int j=0;j <State::pool[i]->transitions.size();j++){
             for(int k=0; k< State::pool[i]->transitions[j].targets.size();k++)
-                os += string(1, State::pool[i]->transitions[j].symbol) + " : " + to_string(State::pool[i]->transitions[j].targets[k]->name) + "  ";
+                os += string(1, State::pool[i]->transitions[j].symbol) + " : " + patch::to_string(State::pool[i]->transitions[j].targets[k]->name) + "  ";
         }
         
         os += "\n";
@@ -104,7 +104,7 @@ string State::showAll(){
     return os;
 }
 
-vector<vector<int>> State::getAllTransitions(){
+vector< vector<int> > State::getAllTransitions(){
     vector<vector<int>> a;
     int temp;
     
@@ -113,7 +113,7 @@ vector<vector<int>> State::getAllTransitions(){
         for(int j=0;j <State::pool[i]->transitions.size();j++){
             for(int k=0; k< State::pool[i]->transitions[j].targets.size();k++){
                 a.push_back(vector<int>());
-                temp = a.size()-1;
+                temp = (int)a.size()-1;
                 a[temp].push_back(State::pool[i]->name);
                 a[temp].push_back(State::pool[i]->transitions[j].symbol);
                 a[temp].push_back(State::pool[i]->transitions[j].targets[k]->name);

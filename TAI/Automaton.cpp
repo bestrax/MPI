@@ -82,7 +82,7 @@ int Automaton::getNbTransitions(){
     return temp;
 }
 
-vector<vector<int>> Automaton::getAllTransitions(){
+vector< vector<int> > Automaton::getAllTransitions(){
     return State::getAllTransitions();
 }
 
@@ -125,9 +125,9 @@ void Automaton::determize(){
     
     //Inialisation des variables temporaires
     vector<State*> manipulate = entries;
-    vector<vector<int>> name;
-    vector<vector<vector<int>>> transitions;
-    vector<vector<int>> toProcess;
+    vector< vector<int> > name;
+    vector< vector< vector<int> > > transitions;
+    vector< vector<int> > toProcess;
     vector<int> newExits;
     string temp;
     
@@ -159,7 +159,7 @@ void Automaton::determize(){
         
         
         //On ajoute les numéros de toutes ses transitions selon le symbole qui permet le passage (on enlève les transitions multiples au passage, par exemple deux transitions vers 3 avec le même symbole)
-        transitions.push_back(vector<vector<int>>());
+        transitions.push_back(vector< vector<int> >());
         
         for(int k=0;k<symbols;k++){
             
@@ -246,7 +246,7 @@ string Automaton::determinizeGetName(vector<int> &a){
     string name = "";
     
     for(int i=0;i<a.size();i++)
-        name += (i==0)?to_string(a[i]): (","+to_string(a[i]));
+        name += (i==0)?patch::to_string(a[i]): (","+patch::to_string(a[i]));
     
     return name;
 }
