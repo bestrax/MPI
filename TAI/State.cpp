@@ -19,8 +19,10 @@ State::State(int name){
 
 State::~State(){    
     for(int i=0; i<State::pool.size();i++){
-        if(State::pool[i] == this)
+        if(State::pool[i] == this){
             State::pool.erase(State::pool.begin()+i);
+            return;
+        }
     }
 }
 
@@ -51,7 +53,7 @@ int State::getName(){
     return this->name;
 }
 
-vector<int> State::getTargerts(char symbol){
+vector<int> State::getTargets(char symbol){
     
     vector<int> name;
     for(int i=0;i<transitions.size();i++){
@@ -62,6 +64,15 @@ vector<int> State::getTargerts(char symbol){
     }
     
     return name;
+}
+
+int State::getNbTargets(){
+    
+    int temp = 0;
+    for(int i=0;i<transitions.size();i++)
+        temp += transitions[i].targets.size();
+    
+    return temp;
 }
 
 State* State::getState(int name){
@@ -93,6 +104,26 @@ string State::showAll(){
     return os;
 }
 
+vector<vector<int>> State::getAllTransitions(){
+    vector<vector<int>> a;
+    int temp;
+    
+    for(int i=0; i<State::pool.size();i++){
+        
+        for(int j=0;j <State::pool[i]->transitions.size();j++){
+            for(int k=0; k< State::pool[i]->transitions[j].targets.size();k++){
+                a.push_back(vector<int>());
+                temp = a.size()-1;
+                a[temp].push_back(State::pool[i]->name);
+                a[temp].push_back(State::pool[i]->transitions[j].symbol);
+                a[temp].push_back(State::pool[i]->transitions[j].targets[k]->name);
+            }
+        }
+    }
+    
+    return a;
+}
+
 bool State::sort(destination &a, destination &b) {
     return a.symbol < b.symbol;
 }
@@ -115,4 +146,8 @@ bool State::isSynchronous(){
 
 vector <State*> State::getPool(){
     return State::pool;
+}
+
+int State::getSizePool(){
+    return (int)State::pool.size();
 }

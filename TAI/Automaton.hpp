@@ -25,11 +25,14 @@ public:
     ~Automaton();
     void setSymbols(int symbols);
     int getSymbols();
+    int getNbState();
     void addEntry(int name);
     void addExit(int name);
     vector< State* > getEntries();
     vector< State* > getExits();
     State* getState(int name);
+    int getNbTransitions();
+    vector<vector<int>> getAllTransitions();
     bool addTransition(int origin, char symbol, int destination);
     bool isSynchronous();
     static bool sortDecrease(int a, int b);
@@ -43,9 +46,12 @@ private:
     int symbols;
     vector< State* > entries;
     vector< State* > exits;
+    vector<string> oldNameState;
     
+    int determizeGetNewName(vector<string> &a, vector<int> &b);
     string determinizeGetName(vector<int> &a);
     void determinizeUnique(vector<int> &a);
+    bool isInVector(vector<int> &a, int b);
     
     
     

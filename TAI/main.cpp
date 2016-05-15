@@ -17,13 +17,20 @@ int main(int argc, const char * argv[]) {
     FileManager file;
     Automaton *a = NULL;
     
-    a = file.load("exemples/a1.txt");
+    a = file.load("exemples/a2.txt");
     
     cout<<*a<<endl;
     
     cout<< "Is synchronous ? : "<<a->isSynchronous()<<endl<<endl;
     
     a->determize();
+    
+    cout<<endl<<endl;
+    
+    cout<<*a<<endl;
+    
+    file.save(*a, "exemples/output.txt");
+    
     
     cout<<endl<<endl;
     

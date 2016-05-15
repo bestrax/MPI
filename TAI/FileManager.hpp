@@ -22,7 +22,8 @@ class FileManager {
     
 public:
     FileManager();
-    Automaton* load(string src);
+    Automaton* load(string const src);
+    bool save(Automaton &a, string const src);
     
 };
 
