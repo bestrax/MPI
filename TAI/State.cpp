@@ -57,14 +57,56 @@ vector<int> State::getTargets(char symbol){
     
     vector<int> name;
     for(int i=0;i<transitions.size();i++){
-        if(transitions[i].symbol == symbol){
-            for(int j=0;j<transitions[i].targets.size();j++)
+        
+        for(int j=0;j<transitions[i].targets.size();j++){
+            
+            if(transitions[i].symbol == symbol && find(name.begin(), name.end(), transitions[i].targets[j]->name) == name.end()){
                 name.push_back(transitions[i].targets[j]->name);
+                getTargetsAsync(transitions[i].targets[j], name);
+            }
+            
         }
+        
+        /*if(transitions[i].symbol == symbol){
+            for(int j=0;j<transitions[i].targets.size();j++){
+                if(find (name.begin(), name.end(), transitions[i].targets[j]->name) == name.end())
+                    name.push_back(transitions[i].targets[j]->name);
+            }
+        }*/
     }
     
     return name;
 }
+
+void State::getTargetsAsync(vector<int> &name){
+    
+    for(int i=0;i<transitions.size();i++){
+        
+        for(int j=0;j<transitions[i].targets.size();j++){
+            if(transitions[i].symbol == '*'){
+                name.push_back(transitions[i].targets[j]->name);
+                transitions[i].targets[j]->getTargetsAsync(name);
+            }
+        }
+    }
+    
+}
+
+void State::getTargetsAsync(State* a, vector<int> &name){
+    
+    for(int i=0;i<a->transitions.size();i++){
+        
+        for(int j=0;j<a->transitions[i].targets.size();j++){
+            if(a->transitions[i].symbol == '*'){
+                name.push_back(a->transitions[i].targets[j]->name);
+                a->transitions[i].targets[j]->getTargetsAsync(name);
+            }
+        }
+    }
+
+}
+
+
 
 int State::getNbTargets(){
     

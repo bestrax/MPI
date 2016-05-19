@@ -114,7 +114,7 @@ bool Automaton::sortDecrease(int a, int b){
 void Automaton::determize(){
     
     //On teste si la déterminisation est possible
-    if(entries.size() == 0 || !isSynchronous()){
+    if(entries.size() == 0){
         cout<<"Impossible de determiniser"<<endl;
         return;
     }
@@ -128,10 +128,23 @@ void Automaton::determize(){
     vector< vector<int> > name;
     vector< vector< vector<int> > > transitions;
     vector< vector<int> > toProcess;
-    vector<int> newExits;
+    vector<int> newExits, temp2;
+    State *temp3;
     string temp;
     
-    int j=0;
+    int j;
+    
+    for(int i=0;i<manipulate.size();i++){
+        manipulate[i]->getTargetsAsync(temp2);
+    }
+    
+    for(int i=0;i<temp2.size();i++){
+        temp3 = entries[0]->getState(temp2[i]);
+        if(find(manipulate.begin(), manipulate.end(), temp3) == manipulate.end())
+            manipulate.push_back(temp3);
+    }
+    
+    j=0;
     
     //Tant qu'on a des élément en attente
     while(manipulate.size() != 0){
@@ -155,6 +168,7 @@ void Automaton::determize(){
         }
         determinizeUnique(name[j]);
         
+        
         sort(name[j].begin(), name[j].end(), sortDecrease);
         
         
@@ -171,8 +185,8 @@ void Automaton::determize(){
             }
             
             determinizeUnique(transitions[j][k]);
+            
         }
-        
         
         // On génère le nouveau nom de l'état, par exemple 0,1,3
         temp = determinizeGetName(name[j]);

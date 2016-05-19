@@ -30,6 +30,8 @@ public:
     void addTarget(char symbol, State* target);
     int getName();
     vector<int> getTargets(char symbol);
+    void getTargetsAsync(vector<int> &name);
+    void getTargetsAsync(State* a, vector<int> &name);
     int getNbTargets();
     State* getState(int name);
     static string showAll();
