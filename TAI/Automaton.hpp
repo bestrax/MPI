@@ -39,7 +39,10 @@ public:
     bool isSynchronous();
     static bool sortDecrease(int a, int b);
     void determize();
-
+    bool isComplete();
+    void complete();
+    bool isWordValid(string a);
+    
     friend ostream &operator<<(ostream& os, const Automaton& a);
 
 

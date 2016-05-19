@@ -284,6 +284,77 @@ bool Automaton::isInVector(vector<int> &a, int b){
     return false;
 }
 
+bool Automaton::isComplete()
+{
+    if(entries.size() == 0)
+    {
+        cout<<"Error"<<endl;
+        return false;
+    }
+    
+    vector<State*> oldPool = entries[0]->getPool();
+    
+    for(int i = 0;i<oldPool.size(); i++)
+    {
+        if(oldPool[i]->enoughTransitions(this->symbols).size() != 0)
+            return false;
+    }
+    
+    return true;
+}
+
+void Automaton::complete()
+{
+    if(entries.size() == 0)
+    {
+        cout<<"Error"<<endl;
+        return;
+    }
+    //un automate est complet ssi il y a au moins une transition sortante pour chaque état
+    //s'il n'y a pas de transition sortante, on crée un nouvelle état P "poubelle"
+    vector<State*> oldPool = entries[0]->getPool();
+    vector <char> temp;
+    State* dustbin = NULL;
+    
+    for(int i = 0;i<oldPool.size(); i++)
+    {
+        temp = oldPool[i]->enoughTransitions(this->symbols);
+        for(int j = 0; j<temp.size(); j++)
+        {
+            if(!dustbin){
+                dustbin = new State();
+                for(int k=0;k<this->symbols;k++)
+                    dustbin->addTarget('a'+k, dustbin);
+            }
+            oldPool[i]->addTarget(temp[j], dustbin);
+        }
+        temp.clear();
+    }
+    
+    return;
+}
+
+bool Automaton::isWordValid(string a){
+    
+    if(entries.size() == 0){
+        cout<<"Error"<<endl;
+        return false;
+    }
+    
+    vector<State*> temp;
+    
+    for(int i=0;i<entries.size();i++){
+        temp = entries[i]->validWord(a);
+        for(int j=0;j<temp.size();j++){
+            if(find(this->exits.begin(), this->exits.end(), temp[j]) != this->exits.end())
+                return true;
+        }
+    }
+    
+    return false;
+    
+}
+
 ostream &operator<<(ostream& os, const Automaton& a){
     return os << State::showAll();
 }

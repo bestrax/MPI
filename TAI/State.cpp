@@ -193,3 +193,65 @@ vector <State*> State::getPool(){
 int State::getSizePool(){
     return (int)State::pool.size();
 }
+
+vector <char> State::enoughTransitions(const int nbSymbols)
+{
+    vector <char> nameState;
+    if(transitions.size()<nbSymbols){
+        for(int i=0;i<nbSymbols;i++){
+            
+            bool exist = false;
+            for(int j=0; j<transitions.size() && !exist ;j++){
+                if(transitions[j].symbol == 'a'+i){
+                    exist = true;
+                    if(transitions[j].targets.size() == 0)
+                        nameState.push_back(transitions[j].symbol);
+                }
+            }
+            if(!exist)
+                nameState.push_back('a'+i);
+            
+        }
+    }
+    return nameState;
+}
+
+vector<State*> State::validWord(string a){
+    
+    vector<State*> temp, temp2;
+    string b;
+    
+    
+    
+    b = a;
+    b.erase(0,1);
+    
+    for(int i=0;i<transitions.size();i++){
+        
+        if(a.size()>0 && transitions[i].symbol == a[0]){
+            for(int j=0; j<transitions[i].targets.size();j++){
+                temp2 = transitions[i].targets[j]->validWord(b);
+                temp.insert(temp.end(), temp2.begin(), temp2.end());
+                temp2.clear();
+            }
+            
+        }
+        else if(transitions[i].symbol == '*'){
+            for(int j=0; j<transitions[i].targets.size();j++){
+                temp2 = transitions[i].targets[j]->validWord(a);
+                temp.insert(temp.end(), temp2.begin(), temp2.end());
+                temp2.clear();
+            }
+            
+        }
+        
+    }
+    
+    if(a.size() == 0 && temp.size() == 0){
+        temp.push_back(this);
+        return temp;
+    }
+    
+    return temp;
+    
+}

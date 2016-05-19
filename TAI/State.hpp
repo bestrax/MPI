@@ -40,7 +40,8 @@ public:
     static bool isSynchronous();
     vector <State*> getPool();
     int getSizePool();
-    
+    vector <char> enoughTransitions(const int nbSymbols);
+    vector<State*> validWord(string a);
     
     
 private:

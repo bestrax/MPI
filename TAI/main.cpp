@@ -27,7 +27,15 @@ int main(int argc, const char * argv[]) {
     
     cout<<endl<<endl;
     
+    
+    cout<< "Is complete ? :"<<a->isComplete()<<endl<<endl;
+    a->complete();
+    
     cout<<*a<<endl;
+    
+    cout<< "Is complete ? :"<<a->isComplete()<<endl<<endl;
+    
+    cout<<"Reconnu ? : "<<a->isWordValid("abababababaababaabbaabab")<<endl;
     
     file.save(*a, "exemples/output.txt");
     
