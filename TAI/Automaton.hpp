@@ -19,6 +19,8 @@
 
 using namespace std;
 
+typedef struct element element;
+
 
 class Automaton {
 
@@ -42,6 +44,8 @@ public:
     bool isComplete();
     void complete();
     bool isWordValid(string a);
+    void minimalize();
+    
     
     friend ostream &operator<<(ostream& os, const Automaton& a);
 
@@ -57,9 +61,21 @@ private:
     string determinizeGetName(vector<int> &a);
     void determinizeUnique(vector<int> &a);
     bool isInVector(vector<int> &a, int b);
+    
+    void minimalizeCompute(element *el, element *current);
+    element* findInElements(element *el, State *a);
+    void getTable(element *el, element *current, vector< vector< vector<int> > > &table,  vector< int > &corres);
+    void showTable(vector< vector< vector<int> > > &table);
+    void sortTable(vector< vector< vector<int> > > &table, vector< int > &corres);
 
 
 
 };
+
+struct element{
+    vector< element* > els;
+    vector< State* > states;
+};
+
 
 #endif /* Automaton_hpp */

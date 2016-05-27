@@ -17,7 +17,7 @@ int main(int argc, const char * argv[]) {
     FileManager file;
     Automaton *a = NULL;
     
-    a = file.load("exemples/a4.txt");
+    a = file.load("exemples/a5.txt");
     
     cout<<*a<<endl;
     
@@ -39,6 +39,12 @@ int main(int argc, const char * argv[]) {
     
     file.save(*a, "exemples/output.txt");
     
+    
+    
+    
+    cout<<endl<<endl;
+    
+    a->minimalize();
     
     cout<<endl<<endl;
     

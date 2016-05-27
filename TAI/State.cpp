@@ -66,13 +66,6 @@ vector<int> State::getTargets(char symbol){
             }
             
         }
-        
-        /*if(transitions[i].symbol == symbol){
-            for(int j=0;j<transitions[i].targets.size();j++){
-                if(find (name.begin(), name.end(), transitions[i].targets[j]->name) == name.end())
-                    name.push_back(transitions[i].targets[j]->name);
-            }
-        }*/
     }
     
     return name;

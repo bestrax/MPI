@@ -355,6 +355,209 @@ bool Automaton::isWordValid(string a){
     
 }
 
+void Automaton::minimalize(){
+    
+    if(this->entries.size() < 1){
+        cout<<"L'automate n'a pas d'entrée."<<endl;
+        exit(0);
+    }
+    
+    element el;
+    vector< vector< vector< int > > > table;
+    vector< int > corres;
+    vector <State*> pool = this->entries[0]->getPool();
+    
+    for(int i=0;i<pool.size();i++){
+        if(find(this->exits.begin(), this->exits.end(), pool[i]) == this->exits.end()){
+            if(el.els.size() == 0)
+                el.els.push_back(new element);
+            
+            el.els[0]->states.push_back(pool[i]);
+        }
+        else{
+            if(el.els.size() == 0){
+                el.els.push_back(new element);
+                el.els.push_back(new element);
+            }else if(el.els.size() == 1){
+                el.els.push_back(new element);
+            }
+            el.els[1]->states.push_back(pool[i]);
+        }
+    }
+    
+    minimalizeCompute(&el, &el);
+    
+    getTable(&el, &el, table, corres);
+    sortTable(table, corres);
+    showTable(table);
+    
+}
+
+
+void Automaton::minimalizeCompute(element *el, element *current){
+    
+    if(current->states.size() == 1)
+        return;
+    
+    if(current->states.size() == 0){
+        for(int i=0;i<current->els.size();i++){
+            minimalizeCompute(el, current->els[i]);
+        }
+        return;
+    }
+    
+    vector< element* > dest;
+    bool found;
+    vector< State* > tmp;
+    element * tmp2;
+    int nberase;
+    
+    do{
+        
+        tmp.clear();
+        dest.clear();
+        
+        for(int i=0;i<this->symbols;i++)
+            dest.push_back( findInElements(el, this->entries[0]->getState( this->entries[0]->getTargets('a'+i)[0])) );
+        
+        tmp.push_back(current->states[0]);
+        
+        for(int i=1;i<current->states.size();i++){
+            found = true;
+            for(int j=0;j<this->symbols;j++){
+                if(findInElements(el, current->states[i]->getState( current->states[i]->getTargets('a'+j)[0])) != dest[j])
+                    found = false;
+            }
+            
+            if(found)
+                tmp.push_back(current->states[i]);
+
+        }
+        
+        if(tmp.size() != current->states.size()){
+            tmp2 = new element;
+            nberase = 0;
+            current->els.push_back(tmp2);
+            for(int i=0; i<tmp.size();i++){
+                
+                tmp2->states.push_back(tmp[i]);
+                nberase = 0;
+                for(int j=0; j<current->states.size();j++){
+                    if(current->states[j] == tmp[i]){
+                        current->states.erase(current->states.begin()+j-nberase);
+                        nberase++;
+                    }
+                }
+            }
+        }
+        
+    }while(tmp.size() != current->states.size());
+    
+    if(current->els.size() > 0 && current->states.size() > 0){
+        tmp2 = new element;
+        current->els.push_back(tmp2);
+        for(int i=0; i<current->states.size();i++){
+            
+            tmp2->states.push_back(current->states[i]);
+            nberase = 0;
+            for(int j=0; j<current->states.size();j++){
+                if(current->states[j] == tmp[i]){
+                    current->states.erase(current->states.begin()+j-nberase);
+                    nberase++;
+                }
+            }
+        }
+    }
+    
+    for(int i=0;i<current->els.size();i++)
+        minimalizeCompute(el, current->els[i]);
+    
+}
+
+
+element* Automaton::findInElements(element *el, State *a){
+    
+    for(int i=0;i<el->states.size();i++){
+        if(el->states[i] == a)
+            return el;
+    }
+    
+    element * tmp = NULL;
+    
+    for(int i=0;i<el->els.size();i++){
+        tmp = findInElements(el->els[i], a);
+        if(tmp != NULL)
+            return tmp;
+    }
+    
+    return NULL;
+}
+
+void Automaton::getTable(element *el, element *current, vector< vector< vector<int> > > &table,  vector< int > &corres){
+    
+    
+    if(current->states.size() == 0){
+        for(int i=0;i<current->els.size();i++){
+            getTable(el, current->els[i], table, corres);
+        }
+        return;
+    }
+        
+    table.push_back(vector< vector<int> >());
+    corres.push_back(current->states[0]->getName());
+    
+    for(int j=0;j<this->symbols;j++){
+        table[table.size()-1].push_back(vector<int>());
+        
+        
+        table[table.size()-1][j].push_back( findInElements( el, this->entries[0]->getState( current->states[0]->getTargets('a'+j)[0]) )->states[0]->getName() );
+    }
+    
+}
+
+void Automaton::showTable(vector< vector< vector<int> > > &table){
+    for(int i=0;i<table.size();i++){
+        
+        cout<<i<<" | ";
+        
+        for(int j=0;j<table[i].size();j++){
+            
+            cout<<(char)('a'+j)<<" : ";
+            
+            for(int k=0;k< table[i][j].size();k++)
+                cout<<table[i][j][k]<<" ";
+            
+        }
+        
+        cout <<"\n";
+        
+    }
+}
+
+void Automaton::sortTable(vector< vector< vector<int> > > &table, vector< int > &corres){
+    
+    for(int i=0;i<table.size();i++){
+        
+        for(int j=0;j<table[i].size();j++){
+            
+            for(int k=0;k<table[i][j].size();k++){
+                
+                for(int n=0;n<corres.size();n++){
+                    if(table[i][j][k] == corres[n]){
+                        table[i][j][k] = n;
+                        n = (int) corres.size();
+                    }
+                }
+                
+            }
+                
+            
+        }
+        
+    }
+    
+}
+
 ostream &operator<<(ostream& os, const Automaton& a){
     return os << State::showAll();
 }
