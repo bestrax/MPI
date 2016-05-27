@@ -64,9 +64,9 @@ private:
     
     void minimalizeCompute(element *el, element *current);
     element* findInElements(element *el, State *a);
-    void getTable(element *el, element *current, vector< vector< vector<int> > > &table,  vector< int > &corres);
+    void getTable(element *el, element *current, vector< vector< vector<int> > > &table,  vector < vector< int > > &corres);
     void showTable(vector< vector< vector<int> > > &table);
-    void sortTable(vector< vector< vector<int> > > &table, vector< int > &corres);
+    void sortTable(vector< vector< vector<int> > > &table, vector < vector< int > > &corres);
 
 
 

@@ -35,7 +35,7 @@ int main(int argc, const char * argv[]) {
     
     cout<< "Is complete ? :"<<a->isComplete()<<endl<<endl;
     
-    cout<<"Reconnu ? : "<<a->isWordValid("abababababaababaabbaabab")<<endl;
+    cout<<"Reconnu ? : "<<a->isWordValid("a")<<endl;
     
     file.save(*a, "exemples/output.txt");
     
@@ -47,6 +47,11 @@ int main(int argc, const char * argv[]) {
     a->minimalize();
     
     cout<<endl<<endl;
+    
+    cout<<*a<<endl;
+    
+    cout<<"Reconnu ? : "<<a->isWordValid("aba")<<endl;
+
     
     return 0;
 }

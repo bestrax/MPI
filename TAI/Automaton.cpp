@@ -364,8 +364,9 @@ void Automaton::minimalize(){
     
     element el;
     vector< vector< vector< int > > > table;
-    vector< int > corres;
+    vector < vector< int > > corres;
     vector <State*> pool = this->entries[0]->getPool();
+    vector< int > newExits;
     
     for(int i=0;i<pool.size();i++){
         if(find(this->exits.begin(), this->exits.end(), pool[i]) == this->exits.end()){
@@ -389,7 +390,41 @@ void Automaton::minimalize(){
     
     getTable(&el, &el, table, corres);
     sortTable(table, corres);
-    showTable(table);
+    //showTable(table);
+    
+    
+    
+    for(int i=0;i<exits.size();i++){
+        for(int j=0;j<corres.size();j++){
+            if(find(corres[j].begin(), corres[j].end(), exits[i]->getName()) != corres[j].end())
+                newExits.push_back(j);
+        }
+    }
+    
+    //On efface les entrées et sorties de même que les anciens états
+    entries.clear();
+    exits.clear();
+    
+    for(int i=0; i<pool.size();i++){
+        delete pool[i];
+    }
+    
+    pool.clear();
+    
+    
+    //On ajoute les nouveaux états et les nouvelles transitions et on marque les états de sorties.
+    for(int i=0;i<table.size();i++){
+        if(i == 0)
+            addEntry(0);
+        
+        for(int j=0;j<table[i].size();j++){
+            addTransition(i, 'a'+j, determizeGetNewName(oldNameState, table[i][j]) );
+        }
+        
+    }
+    
+    for(int i=0;i<newExits.size();i++)
+        addExit(newExits[i]);
     
 }
 
@@ -493,7 +528,7 @@ element* Automaton::findInElements(element *el, State *a){
     return NULL;
 }
 
-void Automaton::getTable(element *el, element *current, vector< vector< vector<int> > > &table,  vector< int > &corres){
+void Automaton::getTable(element *el, element *current, vector< vector< vector<int> > > &table,  vector < vector< int > > &corres){
     
     
     if(current->states.size() == 0){
@@ -504,7 +539,10 @@ void Automaton::getTable(element *el, element *current, vector< vector< vector<i
     }
         
     table.push_back(vector< vector<int> >());
-    corres.push_back(current->states[0]->getName());
+    corres.push_back(vector< int >());
+    
+    for(int i=0;i<current->states.size();i++)
+        corres[corres.size()-1].push_back(current->states[i]->getName());
     
     for(int j=0;j<this->symbols;j++){
         table[table.size()-1].push_back(vector<int>());
@@ -534,7 +572,7 @@ void Automaton::showTable(vector< vector< vector<int> > > &table){
     }
 }
 
-void Automaton::sortTable(vector< vector< vector<int> > > &table, vector< int > &corres){
+void Automaton::sortTable(vector< vector< vector<int> > > &table, vector < vector< int > > &corres){
     
     for(int i=0;i<table.size();i++){
         
@@ -543,7 +581,7 @@ void Automaton::sortTable(vector< vector< vector<int> > > &table, vector< int > 
             for(int k=0;k<table[i][j].size();k++){
                 
                 for(int n=0;n<corres.size();n++){
-                    if(table[i][j][k] == corres[n]){
+                    if(table[i][j][k] == corres[n][0]){
                         table[i][j][k] = n;
                         n = (int) corres.size();
                     }
