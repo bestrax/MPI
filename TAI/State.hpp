@@ -30,16 +30,13 @@ public:
     void addTarget(char symbol, State* target);
     int getName();
     vector<int> getTargets(char symbol);
+    vector<int> getTargetsNotAsync(char symbol);
     void getTargetsAsync(vector<int> &name);
     void getTargetsAsync(State* a, vector<int> &name);
     int getNbTargets();
-    State* getState(int name);
-    static string showAll();
-    static vector< vector<int> > getAllTransitions();
-    static void sortTransitions();
-    static bool isSynchronous();
-    vector <State*> getPool();
-    int getSizePool();
+    int getNbTransitions();
+    void sortTransitions();
+    bool hasAsync();
     vector <char> enoughTransitions(const int nbSymbols);
     vector<State*> validWord(string a);
     
@@ -47,7 +44,6 @@ public:
 private:
     int name;
     vector< destination > transitions;
-    static vector< State* > pool;
     
     static bool sort(destination &a, destination &b);
     

@@ -40,13 +40,10 @@ int Automaton::getSymbols(){
 }
 
 /*
-* function : getter
+* function : getter, retourne le nombre d'états de l'automate
 */
 int Automaton::getNbState(){
-    if(entries.size()>0)
-        return entries[0]->getSizePool();
-    else
-        return 0;
+    return (int)pool.size();
 }
 
 /*
@@ -54,8 +51,10 @@ int Automaton::getNbState(){
 */
 void Automaton::addEntry(int name){
     State* init = getState(name);
-    if(!init)
+    if(!init){
         init = new State(name);
+        pool.push_back(init);
+    }
     entries.push_back(init);
 }
 
@@ -64,8 +63,10 @@ void Automaton::addEntry(int name){
 */
 void Automaton::addExit(int name){
     State* init = getState(name);
-    if(!init)
+    if(!init){
         init = new State(name);
+        pool.push_back(init);
+    }
     exits.push_back(init);
 }
 
@@ -87,11 +88,10 @@ vector< State* > Automaton::getExits(){
 * function : Retourne un élément particulier depuis le pool
 */
 State* Automaton::getState(int name){
-    State *a = NULL;
-    for(int i=0;i<entries.size();i++){
-        a = entries[i]->getState(name);
-        if(a != NULL)
-            return a;
+    
+    for(int i=0; i<pool.size();i++){
+        if(pool[i]->getName() == name)
+            return pool[i];
     }
     
     return NULL;
@@ -107,8 +107,6 @@ int Automaton::getNbTransitions(){
     if(entries.size() == 0)
         return 0;
     
-    vector<State*> pool = entries[0]->getPool();
-    
     for(int i=0;i<pool.size();i++)
         temp += pool[i]->getNbTargets();
 
@@ -119,7 +117,25 @@ int Automaton::getNbTransitions(){
 * function : Retourne un tableau à 2 dimensions avec toutes les transitions
 */
 vector< vector<int> > Automaton::getAllTransitions(){
-    return State::getAllTransitions();
+    vector< vector< int > > a;
+    vector < int > tmp;
+    int temp;
+    
+    for(int i=0; i<pool.size();i++){
+        
+        for(int j=0;j <pool[i]->getNbTransitions();j++){
+            tmp = pool[i]->getTargetsNotAsync('a'+j);
+            for(int k=0; k< tmp.size();k++){
+                a.push_back(vector<int>());
+                temp = (int)a.size()-1;
+                a[temp].push_back(pool[i]->getName());
+                a[temp].push_back('a'+j);
+                a[temp].push_back(tmp[j]);
+            }
+        }
+    }
+    
+    return a;
 }
 
 /*
@@ -134,8 +150,10 @@ bool Automaton::addTransition(int origin, char symbol, int destination){
     if(!init)
         return false;
     
-    if(!dest)
+    if(!dest){
         dest = new State(destination);
+        pool.push_back(dest);
+    }
     
     init->addTarget(symbol, dest);
     
@@ -146,7 +164,12 @@ bool Automaton::addTransition(int origin, char symbol, int destination){
 * function : On teste si l'automate est synchrone
 */
 bool Automaton::isSynchronous(){
-    return State::isSynchronous();
+    for(int i=0;i<pool.size();i++){
+        if(pool[i]->hasAsync())
+            return false;
+    }
+    
+    return true;
 }
 
 /*
@@ -167,10 +190,6 @@ void Automaton::determize(){
         return;
     }
     
-    
-    //On garde les états à supprimer
-    vector<State*> oldPool = entries[0]->getPool();
-    
     //Inialisation des variables temporaires
     vector<State*> manipulate = entries;
     vector< vector<int> > name;
@@ -188,7 +207,7 @@ void Automaton::determize(){
     }
     
     for(int i=0;i<temp2.size();i++){
-        temp3 = entries[0]->getState(temp2[i]);
+        temp3 = getState(temp2[i]);
         if(find(manipulate.begin(), manipulate.end(), temp3) == manipulate.end())
             manipulate.push_back(temp3);
     }
@@ -258,7 +277,7 @@ void Automaton::determize(){
         
        if(toProcess.size()>0){
             for(int i=0;i<toProcess[0].size();i++){
-                manipulate.push_back(entries[0]->getState(toProcess[0][i]));
+                manipulate.push_back(getState(toProcess[0][i]));
             }
            toProcess.erase(toProcess.begin());
         }
@@ -270,11 +289,11 @@ void Automaton::determize(){
     entries.clear();
     exits.clear();
     
-    for(int i=0; i<oldPool.size();i++){
-        delete oldPool[i];
+    for(int i=0; i<pool.size();i++){
+        delete pool[i];
     }
     
-    oldPool.clear();
+    pool.clear();
     
     
     //On ajoute les nouveaux états et les nouvelles transitions et on marque les états de sorties.
@@ -359,11 +378,9 @@ bool Automaton::isComplete()
     
     
     //On vérifie que chaque état dispose de toutes ses transitions
-    vector<State*> oldPool = entries[0]->getPool();
-    
-    for(int i = 0;i<oldPool.size(); i++)
+    for(int i = 0;i<pool.size(); i++)
     {
-        if(oldPool[i]->enoughTransitions(this->symbols).size() != 0)
+        if(pool[i]->enoughTransitions(this->symbols).size() != 0)
             return false;
     }
     
@@ -383,23 +400,23 @@ void Automaton::complete()
     
     //un automate est complet ssi il y a au moins une transition sortante pour chaque état
     //s'il n'y a pas de transition sortante, on crée un nouvelle état P "poubelle"
-    vector<State*> oldPool = entries[0]->getPool();
     vector <char> temp;
     State* dustbin = NULL;
     
     //On parcourt chaque état pour vérifier s'il possede une transition vide, si c'est le cas on fait pointer la transition vers
     //la poubelle
-    for(int i = 0;i<oldPool.size(); i++)
+    for(int i = 0;i<pool.size(); i++)
     {
-        temp = oldPool[i]->enoughTransitions(this->symbols);
+        temp = pool[i]->enoughTransitions(this->symbols);
         for(int j = 0; j<temp.size(); j++)
         {
             if(!dustbin){
                 dustbin = new State();
+                pool.push_back(dustbin);
                 for(int k=0;k<this->symbols;k++)
                     dustbin->addTarget('a'+k, dustbin);
             }
-            oldPool[i]->addTarget(temp[j], dustbin);
+            pool[i]->addTarget(temp[j], dustbin);
         }
         temp.clear();
     }
@@ -447,7 +464,6 @@ void Automaton::minimalize(){
     element el;
     vector< vector< vector< int > > > table;
     vector < vector< int > > corres;
-    vector <State*> pool = this->entries[0]->getPool();
     vector< int > newExits;
     
     //On divise nos états en deux parties sous forme d'un arbre :
@@ -548,7 +564,7 @@ void Automaton::minimalizeCompute(element *el, element *current){
         
         //On enregistre les transitions partant de notre première transition pour chaque symbole
         for(int i=0;i<this->symbols;i++)
-            dest.push_back( findInElements(el, this->entries[0]->getState( this->entries[0]->getTargets('a'+i)[0])) );
+            dest.push_back( findInElements(el, getState( this->entries[0]->getTargets('a'+i)[0])) );
         
         //On ajoute la première transition pour la déplacer quoi qu'il arrive
         tmp.push_back(current->states[0]);
@@ -559,7 +575,7 @@ void Automaton::minimalizeCompute(element *el, element *current){
         for(int i=1;i<current->states.size();i++){
             found = true;
             for(int j=0;j<this->symbols;j++){
-                if(findInElements(el, current->states[i]->getState( current->states[i]->getTargets('a'+j)[0])) != dest[j])
+                if(findInElements(el, getState( current->states[i]->getTargets('a'+j)[0])) != dest[j])
                     found = false;
             }
             
@@ -660,7 +676,7 @@ void Automaton::getTable(element *el, element *current, vector< vector< vector<i
         
         table[table.size()-1].push_back(vector<int>());
         
-        table[table.size()-1][j].push_back( findInElements( el, this->entries[0]->getState( current->states[0]->getTargets('a'+j)[0]) )->states[0]->getName() );
+        table[table.size()-1][j].push_back( findInElements( el, getState( current->states[0]->getTargets('a'+j)[0]) )->states[0]->getName() );
     }
     
 }
@@ -713,11 +729,33 @@ void Automaton::sortTable(vector< vector< vector<int> > > &table, vector < vecto
     
 }
 
+string Automaton::showAll() const{
+    
+    string os;
+    vector< int > tmp;
+    
+    for(int i=0; i<pool.size();i++){
+        pool[i]->sortTransitions();
+        os +=  patch::to_string(pool[i]->getName()) + " | ";
+        for(int j=0;j <pool[i]->getNbTransitions();j++){
+            tmp = pool[i]->getTargetsNotAsync('a'+j);
+            for(int k=0; k< tmp.size();k++)
+                os += string(1, 'a'+j) + " : " + patch::to_string(tmp[k]) + "  ";
+            
+            tmp.clear();
+        }
+        
+        os += "\n";
+    }
+    
+    return os;
+}
+
 /*
 * function : Surcharge de l'opérateur de sortie
 */
 ostream &operator<<(ostream& os, const Automaton& a){
-    return os << State::showAll();
+    return os << a.showAll();
 }
 
 

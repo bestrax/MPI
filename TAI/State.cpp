@@ -8,28 +8,18 @@
 
 #include "State.hpp"
 
-vector< State* > State::pool = vector< State* > ();
-
 /*
 * function : Constructeur par défaut
 */
 State::State(int name){
     transitions = vector<destination>();
     this->name = name;
-    
-    State::pool.push_back(this);
 }
 
 /*
 * function : Destructeur par défaut
 */
-State::~State(){    
-    for(int i=0; i<State::pool.size();i++){
-        if(State::pool[i] == this){
-            State::pool.erase(State::pool.begin()+i);
-            return;
-        }
-    }
+State::~State(){
 }
 
 /*
@@ -90,6 +80,27 @@ vector<int> State::getTargets(char symbol){
 }
 
 /*
+ * function : Retourne toutes les nom des états cibles accessible depuis les transitions
+              sauf celles accessible en asynchrone
+ */
+vector<int> State::getTargetsNotAsync(char symbol){
+    
+    vector<int> name;
+    for(int i=0;i<transitions.size();i++){
+        
+        for(int j=0;j<transitions[i].targets.size();j++){
+            
+            if(transitions[i].symbol == symbol && find(name.begin(), name.end(), transitions[i].targets[j]->name) == name.end()){
+                name.push_back(transitions[i].targets[j]->name);
+            }
+            
+        }
+    }
+    
+    return name;
+}
+
+/*
 * function : Retourne les noms des états cibles accessible seulement avec un epsilon (fonction récursive)
 */
 void State::getTargetsAsync(vector<int> &name){
@@ -125,7 +136,7 @@ void State::getTargetsAsync(State* a, vector<int> &name){
 }
 
 /*
-* function : Retourne le nombre de symbole ayant des transitions
+* function : Retourne le nombre d'états cibles dans les transitions
 */
 int State::getNbTargets(){
     
@@ -136,81 +147,36 @@ int State::getNbTargets(){
     return temp;
 }
 
-State* State::getState(int name){
-    
-    for(int i=0; i<State::pool.size();i++){
-        if(State::pool[i]->name == name)
-            return State::pool[i];
-    }
-    
-    return NULL;
+/*
+ * function : Retourne le nombre de transitions
+ */
+int State::getNbTransitions(){    
+    return (int)transitions.size();
 }
 
-string State::showAll(){
-    
-    string os;
-    
-    State::sortTransitions();
-    
-    for(int i=0; i<State::pool.size();i++){
-        os +=  patch::to_string(State::pool[i]->name) + " | ";
-        for(int j=0;j <State::pool[i]->transitions.size();j++){
-            for(int k=0; k< State::pool[i]->transitions[j].targets.size();k++)
-                os += string(1, State::pool[i]->transitions[j].symbol) + " : " + patch::to_string(State::pool[i]->transitions[j].targets[k]->name) + "  ";
-        }
-        
-        os += "\n";
-    }
-    
-    return os;
-}
-
-vector< vector<int> > State::getAllTransitions(){
-    vector<vector<int>> a;
-    int temp;
-    
-    for(int i=0; i<State::pool.size();i++){
-        
-        for(int j=0;j <State::pool[i]->transitions.size();j++){
-            for(int k=0; k< State::pool[i]->transitions[j].targets.size();k++){
-                a.push_back(vector<int>());
-                temp = (int)a.size()-1;
-                a[temp].push_back(State::pool[i]->name);
-                a[temp].push_back(State::pool[i]->transitions[j].symbol);
-                a[temp].push_back(State::pool[i]->transitions[j].targets[k]->name);
-            }
-        }
-    }
-    
-    return a;
-}
-
+/*
+* function : Fonction de comparaison utilisé avec std::sort sur un vector de transitions
+*/
 bool State::sort(destination &a, destination &b) {
     return a.symbol < b.symbol;
 }
 
+/*
+* function : Trie les transitions par symboles croissants
+*/
 void State::sortTransitions(){
-    for(int i=0; i<State::pool.size();i++)
-        std::sort (State::pool[i]->transitions.begin(), State::pool[i]->transitions.end(), sort);
+    std::sort (this->transitions.begin(), this->transitions.end(), sort);
 }
 
-bool State::isSynchronous(){
-    for(int i=0;i<State::pool.size();i++){
-        for(int j=0;j<State::pool[i]->transitions.size();j++){
-            if(State::pool[i]->transitions[j].symbol == '*')
-                return false;
-        }
+/*
+* function : Teste s'il existe la transition epsilon
+*/
+bool State::hasAsync(){
+    for(int i=0;i<transitions.size();i++){
+        if(transitions[i].symbol == '*')
+            return true;
     }
-    
-    return true;
-}
-
-vector <State*> State::getPool(){
-    return State::pool;
-}
-
-int State::getSizePool(){
-    return (int)State::pool.size();
+    return false;
 }
 
 /*

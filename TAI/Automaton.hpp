@@ -45,7 +45,7 @@ public:
     void complete();
     bool isWordValid(string a);
     void minimalize();
-    
+    string showAll() const;
     
     friend ostream &operator<<(ostream& os, const Automaton& a);
 
@@ -56,6 +56,7 @@ private:
     vector< State* > entries;
     vector< State* > exits;
     vector<string> oldNameState;
+    vector< State* > pool;
 
     int determizeGetNewName(vector<string> &a, vector<int> &b);
     string determinizeGetName(vector<int> &a);
