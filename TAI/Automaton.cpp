@@ -794,10 +794,18 @@ string Automaton::showAll() const{
                 break;
         }
         
-        for(int j=0;j <pool[i]->getNbTransitions();j++){
+        for(int j=0;j <pool[i]->getNbTransitions()-(int)pool[i]->hasAsync();j++){
             tmp = pool[i]->getTargetsNotAsync('a'+j);
             for(int k=0; k< tmp.size();k++)
                 os += string(1, 'a'+j) + " : " + patch::to_string(tmp[k]) + "  ";
+            
+            tmp.clear();
+        }
+        
+        if(pool[i]->hasAsync()){
+            tmp = pool[i]->getTargetsNotAsync('*');
+            for(int k=0; k< tmp.size();k++)
+                os += string(1, '*') + " : " + patch::to_string(tmp[k]) + "  ";
             
             tmp.clear();
         }
