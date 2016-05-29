@@ -45,6 +45,7 @@ public:
     void complete();
     bool isWordValid(string a);
     void minimalize();
+    short typeState(State *a) const;
     string showAll() const;
     
     friend ostream &operator<<(ostream& os, const Automaton& a);

@@ -729,6 +729,33 @@ void Automaton::sortTable(vector< vector< vector<int> > > &table, vector < vecto
     
 }
 
+/*
+* function : Retourne 0 si ce n'est ni une sortie ni  une entrée, 1 si c'est une entrée et 2 si c'est une sortie
+             et 3 si c'est une entrée et une sortie
+*/
+short Automaton::typeState(State *a) const{
+    short tmp = 0;
+    
+    for(int i=0;i<entries.size();i++){
+        if(entries[i] == a)
+            tmp = 1;
+    }
+    
+    for(int i=0;i<exits.size();i++){
+        if(exits[i] == a){
+            if(tmp == 1)
+                return 3;
+            else
+                return 2;
+        }
+    }
+    
+    return tmp;
+}
+
+/*
+* function : Génère un string représentant la table de transition
+*/
 string Automaton::showAll() const{
     
     string os;
@@ -736,7 +763,25 @@ string Automaton::showAll() const{
     
     for(int i=0; i<pool.size();i++){
         pool[i]->sortTransitions();
-        os +=  patch::to_string(pool[i]->getName()) + " | ";
+        
+        switch (typeState(pool[i])) {
+            case 1:
+                os +=  patch::to_string(pool[i]->getName()) + "(E)   | ";
+                break;
+                
+            case 2:
+                os +=  patch::to_string(pool[i]->getName()) + "(S)   | ";
+                break;
+            
+            case 3:
+                os +=  patch::to_string(pool[i]->getName()) + "(E/S) | ";
+                break;
+                
+            default:
+                os +=  patch::to_string(pool[i]->getName()) + "      | ";
+                break;
+        }
+        
         for(int j=0;j <pool[i]->getNbTransitions();j++){
             tmp = pool[i]->getTargetsNotAsync('a'+j);
             for(int k=0; k< tmp.size();k++)
