@@ -56,6 +56,7 @@ int main(int argc, const char * argv[]) {
     }
     
     cout<<*a<<endl;
+    cout<<"Les états ont ete renomes comme suit :\n"<<a->getTableOldNameState()<<endl<<endl;
     
    
 

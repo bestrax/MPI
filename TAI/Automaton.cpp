@@ -271,7 +271,7 @@ void Automaton::determize(){
         
         // On génère le nouveau nom de l'état, par exemple 0,1,3
         temp = determinizeGetName(name[j]);
-        if(find(oldNameState.begin(), oldNameState.end(), temp) == oldNameState.end())
+        if(find(oldNameState.begin(), oldNameState.end(), temp) == oldNameState.end() && temp.size() > 0)
             oldNameState.push_back(temp);
     
         
@@ -279,7 +279,7 @@ void Automaton::determize(){
         for(int k=0; k<transitions[j].size();k++){
             
             temp = determinizeGetName(transitions[j][k]);
-            if(find(oldNameState.begin(), oldNameState.end(), temp) == oldNameState.end()){
+            if(find(oldNameState.begin(), oldNameState.end(), temp) == oldNameState.end() && temp.size() > 0){
                 oldNameState.push_back(temp);
                 toProcess.push_back(transitions[j][k]);
             }
@@ -347,6 +347,8 @@ int Automaton::determizeGetNewName(vector<string> &a, vector<int> &b){
 */
 string Automaton::determinizeGetName(vector<int> &a){
     string name = "";
+    
+    std::sort (a.begin(), a.end());
     
     for(int i=0;i<a.size();i++)
         name += (i==0)?patch::to_string(a[i]): (","+patch::to_string(a[i]));
@@ -770,6 +772,15 @@ short Automaton::typeState(State *a) const{
     }
     
     return tmp;
+}
+
+string Automaton::getTableOldNameState() const{
+    string os;
+    
+    for(int i=0;i<oldNameState.size();i++)
+        os += patch::to_string(i) + " : " + oldNameState[i] + "\n";
+    
+    return os;
 }
 
 /*
