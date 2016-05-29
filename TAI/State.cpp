@@ -180,6 +180,17 @@ bool State::hasAsync(){
 }
 
 /*
+ * function : Teste si l'automate est déterministe
+ */
+bool State::isDeter(){
+    for(int i=0;i<transitions.size();i++){
+        if(transitions[i].targets.size() > 1)
+            return false;
+    }
+    return true;
+}
+
+/*
 * function : Retourne les symboles des transitions n'existant pas ou ne disposant pas d'états cibles
 */
 vector <char> State::enoughTransitions(const int nbSymbols)

@@ -37,6 +37,7 @@ public:
     int getNbTransitions();
     void sortTransitions();
     bool hasAsync();
+    bool isDeter();
     vector <char> enoughTransitions(const int nbSymbols);
     vector<State*> validWord(string a);
     

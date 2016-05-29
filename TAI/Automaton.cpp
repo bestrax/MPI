@@ -180,6 +180,17 @@ bool Automaton::sortDecrease(int a, int b){
 }
 
 /*
+* function : Teste si l'automate est déterministe
+*/
+bool Automaton::isDeter(){
+    for(int i=0;i<pool.size();i++){
+        if(!pool[i]->isDeter())
+            return false;
+    }
+    return true;
+}
+
+/*
 * function : Cette fonction déterminise un automate, elle s'occupe de le modifier et de sauvegarde les noms des anciens états
 */
 void Automaton::determize(){

@@ -21,19 +21,35 @@ int main(int argc, const char * argv[]) {
     
     cout<<*a<<endl;
     
-    cout<< "Is synchronous ? : "<<a->isSynchronous()<<endl<<endl;
+    if(a->isSynchronous()){
+        cout<<"L'automate est synchrone"<<endl<<endl;
+        
+        //TODO : Détecter si l'automate est déterministe ou pas
+        
+        if(0){
+            
+            cout<<"L'automate est déterministe"<<endl<<endl;
+            if(a->isComplete()){
+                cout<<"L'automate est complet"<<endl<<endl;
+            }else{
+                cout<<"L'automate n'est pas complet"<<endl<<endl;
+                a->complete();
+            }
+            
+        }else{
+            
+            cout<<"L'automate n'est pas déterministe"<<endl<<endl;
+            a->determize();
+            
+        }
+    }
+    else
+        cout<<"L'automate est asynchrone"<<endl<<endl;
     
-    a->determize();
+   
+
+   /* cout<<*a<<endl;
     
-    cout<<endl<<endl;
-    
-    
-    cout<< "Is complete ? :"<<a->isComplete()<<endl<<endl;
-    a->complete();
-    
-    cout<<*a<<endl;
-    
-    cout<< "Is complete ? :"<<a->isComplete()<<endl<<endl;
     
     cout<<"Reconnu ? : "<<a->isWordValid("a")<<endl;
     
@@ -50,7 +66,7 @@ int main(int argc, const char * argv[]) {
     
     cout<<*a<<endl;
     
-    cout<<"Reconnu ? : "<<a->isWordValid("aba")<<endl;
+    cout<<"Reconnu ? : "<<a->isWordValid("aba")<<endl;*/
 
     
     return 0;
