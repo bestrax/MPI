@@ -17,7 +17,7 @@ int main(int argc, const char * argv[]) {
     FileManager file;
     Automaton *a = NULL;
     
-    a = file.load("exemples/a5.txt");
+    a = file.load("exemples/a1.txt");
     
     cout<<*a<<endl;
     
@@ -26,9 +26,11 @@ int main(int argc, const char * argv[]) {
         
         //TODO : Détecter si l'automate est déterministe ou pas
         
-        if(0){
+        vector< int > tmp = a->isDeter();
+        
+        if(tmp.size() == 0){
             
-            cout<<"L'automate est déterministe"<<endl<<endl;
+            cout<<"L'automate est deterministe"<<endl<<endl;
             if(a->isComplete()){
                 cout<<"L'automate est complet"<<endl<<endl;
             }else{
@@ -38,7 +40,11 @@ int main(int argc, const char * argv[]) {
             
         }else{
             
-            cout<<"L'automate n'est pas déterministe"<<endl<<endl;
+            cout<<"L'automate n'est pas déterministe car les etats suivants possedent plusieurs etats cibles pour une meme transition :"<<endl;
+            for(int i=0;i<tmp.size();i++)
+                cout<<"- "<< tmp[i]<<endl;
+            
+            cout<<endl;
             a->determize();
             
         }

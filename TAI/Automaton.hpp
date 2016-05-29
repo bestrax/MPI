@@ -40,7 +40,7 @@ public:
     bool addTransition(int origin, char symbol, int destination);
     bool isSynchronous();
     static bool sortDecrease(int a, int b);
-    bool isDeter();
+    vector< int > isDeter();
     void determize();
     bool isComplete();
     void complete();

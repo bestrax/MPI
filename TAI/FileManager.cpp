@@ -37,6 +37,11 @@ Automaton* FileManager::load(string const src){
     
     //On ajoute les états d'origine
     for(int i=0;i<origin;i++){
+        if(file.eof()){
+            cout<<"Attention le fichier est mal construit"<<endl<<endl;
+            break;
+        }
+        
         temp = -1;
         file >> temp;
         if(temp != -1)
@@ -47,6 +52,11 @@ Automaton* FileManager::load(string const src){
     file >> destination;
     
     for(int i=0;i<destination;i++){
+        if(file.eof()){
+            cout<<"Attention le fichier est mal construit"<<endl<<endl;
+            break;
+        }
+            
         temp = -1;
         file >> temp;
         if(temp != -1)
@@ -58,6 +68,10 @@ Automaton* FileManager::load(string const src){
     file >> nbTrans;
     
     for(int i=0;i<nbTrans;i++){
+        if(file.eof()){
+            cout<<"Attention le fichier est mal construit (nombre de transitions inférieur au nombre déclaré)"<<endl<<endl;
+            break;
+        }
         file >> origin;
         file >> symbol;
         file >> destination;

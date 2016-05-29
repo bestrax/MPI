@@ -182,12 +182,13 @@ bool Automaton::sortDecrease(int a, int b){
 /*
 * function : Teste si l'automate est déterministe
 */
-bool Automaton::isDeter(){
+vector< int > Automaton::isDeter(){
+    vector< int > tmp;
     for(int i=0;i<pool.size();i++){
         if(!pool[i]->isDeter())
-            return false;
+            tmp.push_back(pool[i]->getName());
     }
-    return true;
+    return tmp;
 }
 
 /*
