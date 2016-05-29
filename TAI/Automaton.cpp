@@ -229,7 +229,8 @@ void Automaton::determize(){
     //Tant qu'on a des élément en attente
     while(manipulate.size() != 0){
     
-        //On crée le nouvel élément et on liste toutes ses transitions (on enlève le cas où on aurait plusieurs fois le même état). On regarde aussi si l'état sera un état de sortie
+        //On crée le nouvel élément et on liste tous les états en attente pour faire son nom (on enlève le cas où on aurait
+        //plusieurs fois le même état). On regarde aussi si l'état sera un état de sortie.
         name.push_back(vector<int>());
         
         bool add = false;
@@ -314,7 +315,8 @@ void Automaton::determize(){
             addEntry(0);
         
         for(int j=0;j<transitions[i].size();j++){
-            addTransition(i, 'a'+j, determizeGetNewName(oldNameState, transitions[i][j]) );
+            if(transitions[i][j].size() > 0)
+                addTransition(i, 'a'+j, determizeGetNewName(oldNameState, transitions[i][j]) );
         }
         
     }
@@ -423,7 +425,12 @@ void Automaton::complete()
         for(int j = 0; j<temp.size(); j++)
         {
             if(!dustbin){
-                dustbin = new State();
+                int max=-1;
+                for(int k=0;k<pool.size();k++){
+                    if(pool[k]->getName() >= max)
+                        max = pool[k]->getName()+1;
+                }
+                dustbin = new State(max);
                 pool.push_back(dustbin);
                 for(int k=0;k<this->symbols;k++)
                     dustbin->addTarget('a'+k, dustbin);

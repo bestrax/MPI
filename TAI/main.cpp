@@ -49,8 +49,13 @@ int main(int argc, const char * argv[]) {
             
         }
     }
-    else
+    else{
         cout<<"L'automate est asynchrone"<<endl<<endl;
+        a->determize();
+        a->complete();
+    }
+    
+    cout<<*a<<endl;
     
    
 
