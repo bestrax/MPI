@@ -10,6 +10,9 @@
 
 vector< State* > State::pool = vector< State* > ();
 
+/*
+* function : Constructeur par défaut
+*/
 State::State(int name){
     transitions = vector<destination>();
     this->name = name;
@@ -17,6 +20,9 @@ State::State(int name){
     State::pool.push_back(this);
 }
 
+/*
+* function : Destructeur par défaut
+*/
 State::~State(){    
     for(int i=0; i<State::pool.size();i++){
         if(State::pool[i] == this){
@@ -26,10 +32,14 @@ State::~State(){
     }
 }
 
+/*
+* function : On ajoute une transtion
+*/
 void State::addTarget(char symbol, State* target){
     
     bool exist = false;
     
+    //On cherche la transition avec ce symbole et on y ajoute un nouvel état de destination
     for(int i=0;i<transitions.size();i++){
         if(transitions[i].symbol == symbol){
             transitions[i].targets.push_back(target);
@@ -37,6 +47,7 @@ void State::addTarget(char symbol, State* target){
         }
     }
     
+    //Si la transition n'existe pas on la crée et on y ajoute un état de destination
     if(!exist){
         destination a;
         
@@ -49,10 +60,17 @@ void State::addTarget(char symbol, State* target){
     
 }
 
+/*
+* function : Getter, retourne le nom de l'état
+*/
 int State::getName(){
     return this->name;
 }
 
+/*
+* function : Retourne toutes les nom des états cibles accessible depuis les transitions y 
+             compris celles accessible en asynchrone
+*/
 vector<int> State::getTargets(char symbol){
     
     vector<int> name;
@@ -71,6 +89,9 @@ vector<int> State::getTargets(char symbol){
     return name;
 }
 
+/*
+* function : Retourne les noms des états cibles accessible seulement avec un epsilon (fonction récursive)
+*/
 void State::getTargetsAsync(vector<int> &name){
     
     for(int i=0;i<transitions.size();i++){
@@ -85,6 +106,10 @@ void State::getTargetsAsync(vector<int> &name){
     
 }
 
+/*
+ * function : Retourne les noms des états cibles accessible seulement avec un epsilon (fonction récursive). Depuis
+              un état défini
+ */
 void State::getTargetsAsync(State* a, vector<int> &name){
     
     for(int i=0;i<a->transitions.size();i++){
@@ -99,8 +124,9 @@ void State::getTargetsAsync(State* a, vector<int> &name){
 
 }
 
-
-
+/*
+* function : Retourne le nombre de symbole ayant des transitions
+*/
 int State::getNbTargets(){
     
     int temp = 0;
@@ -187,6 +213,9 @@ int State::getSizePool(){
     return (int)State::pool.size();
 }
 
+/*
+* function : Retourne les symboles des transitions n'existant pas ou ne disposant pas d'états cibles
+*/
 vector <char> State::enoughTransitions(const int nbSymbols)
 {
     vector <char> nameState;
@@ -209,16 +238,20 @@ vector <char> State::enoughTransitions(const int nbSymbols)
     return nameState;
 }
 
+/*
+* function : Verifie si un mot est valide en récursif
+*/
 vector<State*> State::validWord(string a){
     
     vector<State*> temp, temp2;
     string b;
     
-    
-    
+    //On sauvegarde notre chaine initiale mais aussi la chaine accessible depuis les prochains états
     b = a;
     b.erase(0,1);
     
+    //Dans chaque transitions on envoie notre string raccourcit d'un caractère si le symbole correspond à notre premier
+    //symbole du string ou si l'on a affaire à une transition epsilon
     for(int i=0;i<transitions.size();i++){
         
         if(a.size()>0 && transitions[i].symbol == a[0]){
@@ -240,6 +273,8 @@ vector<State*> State::validWord(string a){
         
     }
     
+    //Si notre string est vide et que l'on ai pas déjà des états finaux alors on ajoute l'état courant et
+    //on retourne le table d'états finaux
     if(a.size() == 0 && temp.size() == 0){
         temp.push_back(this);
         return temp;

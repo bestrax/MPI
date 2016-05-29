@@ -58,7 +58,7 @@ struct destination {
     char symbol;
 };
 
-// In order to patch old GCC problems of compilation on to_string
+// Afin de régler le problème des vieux GCC (par exemple ceux disponible à l'école...)
 namespace patch
 {
     template < typename T > std::string to_string( const T& n )

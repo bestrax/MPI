@@ -72,6 +72,7 @@ private:
 
 };
 
+//Structure servant de noeud pour l'arbre de minimisation
 struct element{
     vector< element* > els;
     vector< State* > states;

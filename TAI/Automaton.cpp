@@ -8,26 +8,40 @@
 
 #include "Automaton.hpp"
 
-
+/*
+* function : Constructeur par défaut
+*/
 Automaton::Automaton(int symbols){
     entries = vector< State* >();
     exits = vector< State* >();
     this->symbols = symbols;
 }
 
+/*
+* function : Destructeur par défaut
+*/
 Automaton::~Automaton(){
     for(int i=0;i<entries.size();i++)
         delete entries[i];
 }
 
+/*
+* function : setter
+*/
 void Automaton::setSymbols(int symbols){
     this->symbols = symbols;
 }
 
+/*
+* function : getter
+*/
 int Automaton::getSymbols(){
     return symbols;
 }
 
+/*
+* function : getter
+*/
 int Automaton::getNbState(){
     if(entries.size()>0)
         return entries[0]->getSizePool();
@@ -35,6 +49,9 @@ int Automaton::getNbState(){
         return 0;
 }
 
+/*
+* function : Ajoute une entrée, si l'élement n'existe pas alors on le crée
+*/
 void Automaton::addEntry(int name){
     State* init = getState(name);
     if(!init)
@@ -42,6 +59,9 @@ void Automaton::addEntry(int name){
     entries.push_back(init);
 }
 
+/*
+* function : Ajoute une sortie, si l'élement n'existe pas alors on le crée
+*/
 void Automaton::addExit(int name){
     State* init = getState(name);
     if(!init)
@@ -49,13 +69,23 @@ void Automaton::addExit(int name){
     exits.push_back(init);
 }
 
+/*
+* function : getter, retourne toutes les entrées
+*/
 vector< State* > Automaton::getEntries(){
     return entries;
 }
+
+/*
+* function : getter, retourne toutes les sorties
+*/
 vector< State* > Automaton::getExits(){
     return exits;
 }
 
+/*
+* function : Retourne un élément particulier depuis le pool
+*/
 State* Automaton::getState(int name){
     State *a = NULL;
     for(int i=0;i<entries.size();i++){
@@ -67,6 +97,9 @@ State* Automaton::getState(int name){
     return NULL;
 }
 
+/*
+* function : Retourne le nombre de transitions de l'automate
+*/
 int Automaton::getNbTransitions(){
     
     int temp = 0;
@@ -82,10 +115,16 @@ int Automaton::getNbTransitions(){
     return temp;
 }
 
+/*
+* function : Retourne un tableau à 2 dimensions avec toutes les transitions
+*/
 vector< vector<int> > Automaton::getAllTransitions(){
     return State::getAllTransitions();
 }
 
+/*
+* function : Ajoute une transition et un état si besoin est
+*/
 bool Automaton::addTransition(int origin, char symbol, int destination){
     State* init = NULL, *dest = NULL;
     
@@ -103,14 +142,23 @@ bool Automaton::addTransition(int origin, char symbol, int destination){
     return true;
 }
 
+/*
+* function : On teste si l'automate est synchrone
+*/
 bool Automaton::isSynchronous(){
     return State::isSynchronous();
 }
 
+/*
+* function : Fonction nous permettant de trier par ordre décroissant un vector
+*/
 bool Automaton::sortDecrease(int a, int b){
     return b > a;
 }
 
+/*
+* function : Cette fonction déterminise un automate, elle s'occupe de le modifier et de sauvegarde les noms des anciens états
+*/
 void Automaton::determize(){
     
     //On teste si la déterminisation est possible
@@ -134,6 +182,7 @@ void Automaton::determize(){
     
     int j;
     
+    //On met en attente les entrées de l'automate et les états accessible depuis les entrées avec des transitions epsilon
     for(int i=0;i<manipulate.size();i++){
         manipulate[i]->getTargetsAsync(temp2);
     }
@@ -239,12 +288,16 @@ void Automaton::determize(){
         
     }
     
+    //On pense à remettre les sorties de l'automate
     for(int i=0;i<newExits.size();i++)
         addExit(newExits[i]);
     
     
 }
 
+/*
+* function : Retourne le nom du nouvel état selon les états déjà créée
+*/
 int Automaton::determizeGetNewName(vector<string> &a, vector<int> &b){
     string temp = determinizeGetName(b);
     
@@ -256,6 +309,9 @@ int Automaton::determizeGetNewName(vector<string> &a, vector<int> &b){
     return -1;
 }
 
+/*
+* function : Retourne le nom de l'état en concaténant les noms des états
+*/
 string Automaton::determinizeGetName(vector<int> &a){
     string name = "";
     
@@ -265,6 +321,9 @@ string Automaton::determinizeGetName(vector<int> &a){
     return name;
 }
 
+/*
+* function : Efface les doublons dans le tableau d'entier
+*/
 void Automaton::determinizeUnique(vector<int> &a){
     set<int> b;
     
@@ -276,6 +335,9 @@ void Automaton::determinizeUnique(vector<int> &a){
     }
 }
 
+/*
+* function : Vérifie si l'élément b se trouve dans le vector a
+*/
 bool Automaton::isInVector(vector<int> &a, int b){
     for(int i=0;i<a.size();i++){
         if(a[i] == b)
@@ -284,14 +346,19 @@ bool Automaton::isInVector(vector<int> &a, int b){
     return false;
 }
 
+/*
+* function : Vérifie si l'automate est complet
+*/
 bool Automaton::isComplete()
 {
     if(entries.size() == 0)
     {
-        cout<<"Error"<<endl;
+        cout<<"L'automate ne possede pas d'entree"<<endl;
         return false;
     }
     
+    
+    //On vérifie que chaque état dispose de toutes ses transitions
     vector<State*> oldPool = entries[0]->getPool();
     
     for(int i = 0;i<oldPool.size(); i++)
@@ -303,19 +370,25 @@ bool Automaton::isComplete()
     return true;
 }
 
+/*
+* function : Fonction qui complète un automate
+*/
 void Automaton::complete()
 {
     if(entries.size() == 0)
     {
-        cout<<"Error"<<endl;
+        cout<<"L'automate ne possede pas d'entree"<<endl;
         return;
     }
+    
     //un automate est complet ssi il y a au moins une transition sortante pour chaque état
     //s'il n'y a pas de transition sortante, on crée un nouvelle état P "poubelle"
     vector<State*> oldPool = entries[0]->getPool();
     vector <char> temp;
     State* dustbin = NULL;
     
+    //On parcourt chaque état pour vérifier s'il possede une transition vide, si c'est le cas on fait pointer la transition vers
+    //la poubelle
     for(int i = 0;i<oldPool.size(); i++)
     {
         temp = oldPool[i]->enoughTransitions(this->symbols);
@@ -334,15 +407,20 @@ void Automaton::complete()
     return;
 }
 
+/*
+* function : Fonction qui vérifie si un mot est accepté par l'automate
+*/
 bool Automaton::isWordValid(string a){
     
     if(entries.size() == 0){
-        cout<<"Error"<<endl;
+        cout<<"L'automate ne possede pas d'entree"<<endl;
         return false;
     }
     
     vector<State*> temp;
     
+    //On lance sur toutes entrées l'analyse pour voir si le mot est accepté,
+    //On vérifie que les états où on s'est arrêté car le mot était lu en entier sont des états de sorties
     for(int i=0;i<entries.size();i++){
         temp = entries[i]->validWord(a);
         for(int j=0;j<temp.size();j++){
@@ -355,19 +433,25 @@ bool Automaton::isWordValid(string a){
     
 }
 
+/*
+* function : Fonction qui minimalise un automate
+*/
 void Automaton::minimalize(){
     
     if(this->entries.size() < 1){
-        cout<<"L'automate n'a pas d'entrée."<<endl;
+        cout<<"L'automate n'a pas d'entree."<<endl;
         exit(0);
     }
     
+    //On définit nos variables temporaires
     element el;
     vector< vector< vector< int > > > table;
     vector < vector< int > > corres;
     vector <State*> pool = this->entries[0]->getPool();
     vector< int > newExits;
     
+    //On divise nos états en deux parties sous forme d'un arbre :
+    //Les états terminaux et les états non terminaux
     for(int i=0;i<pool.size();i++){
         if(find(this->exits.begin(), this->exits.end(), pool[i]) == this->exits.end()){
             if(el.els.size() == 0)
@@ -386,14 +470,17 @@ void Automaton::minimalize(){
         }
     }
     
+    //On lance la minimisation
     minimalizeCompute(&el, &el);
     
+    //On crée la table de transitions et la table avec les anciens noms (table de correspondance) à l'aide de
+    //l'arbre créée lors de la minimisation
     getTable(&el, &el, table, corres);
     sortTable(table, corres);
     //showTable(table);
     
     
-    
+    //On sauvegarde les états de sorties pour les trouver dans les nouveaux états
     for(int i=0;i<exits.size();i++){
         for(int j=0;j<corres.size();j++){
             if(find(corres[j].begin(), corres[j].end(), exits[i]->getName()) != corres[j].end())
@@ -428,12 +515,16 @@ void Automaton::minimalize(){
     
 }
 
-
+/*
+* function : Fonction récursive qui crée un arbre pour minimaliser un automate
+*/
 void Automaton::minimalizeCompute(element *el, element *current){
     
+    //Si on est sur une feuille on quitte
     if(current->states.size() == 1)
         return;
     
+    //Si on est sur un noeud alors on descend en récursif sur nos éléments enfants
     if(current->states.size() == 0){
         for(int i=0;i<current->els.size();i++){
             minimalizeCompute(el, current->els[i]);
@@ -441,22 +532,30 @@ void Automaton::minimalizeCompute(element *el, element *current){
         return;
     }
     
+    //On définit nos variables temporaires
     vector< element* > dest;
     bool found;
     vector< State* > tmp;
     element * tmp2;
     int nberase;
     
+    //Tant que l'on traite des éléments on continue
     do{
         
+        //On vide nos vector temporaires
         tmp.clear();
         dest.clear();
         
+        //On enregistre les transitions partant de notre première transition pour chaque symbole
         for(int i=0;i<this->symbols;i++)
             dest.push_back( findInElements(el, this->entries[0]->getState( this->entries[0]->getTargets('a'+i)[0])) );
         
+        //On ajoute la première transition pour la déplacer quoi qu'il arrive
         tmp.push_back(current->states[0]);
         
+        
+        //On parcourt toutes nos autres transitions et on regarde si nos transitions sortantes
+        //sont les mêmes et dans le même ordre que nos transitions sortantes de notre première transition
         for(int i=1;i<current->states.size();i++){
             found = true;
             for(int j=0;j<this->symbols;j++){
@@ -469,6 +568,7 @@ void Automaton::minimalizeCompute(element *el, element *current){
 
         }
         
+        //Si on a une transition à déplacer on lefface et on l'ajoute en élément enfant de notre noeud courant
         if(tmp.size() != current->states.size()){
             tmp2 = new element;
             nberase = 0;
@@ -488,6 +588,9 @@ void Automaton::minimalizeCompute(element *el, element *current){
         
     }while(tmp.size() != current->states.size());
     
+    //Si on on a des éléments enfants mais aussi des états alors on met les
+    //états dans un élément enfant
+    
     if(current->els.size() > 0 && current->states.size() > 0){
         tmp2 = new element;
         current->els.push_back(tmp2);
@@ -504,12 +607,15 @@ void Automaton::minimalizeCompute(element *el, element *current){
         }
     }
     
+    //On lance notre minimalisation en récursif pour nos éléments enfants
     for(int i=0;i<current->els.size();i++)
         minimalizeCompute(el, current->els[i]);
     
 }
 
-
+/*
+* function : Fonction qui recherche dans un arbre un état en particulier
+*/
 element* Automaton::findInElements(element *el, State *a){
     
     for(int i=0;i<el->states.size();i++){
@@ -528,31 +634,41 @@ element* Automaton::findInElements(element *el, State *a){
     return NULL;
 }
 
+/*
+* function : Retourne la table de transition et la table de correspondance depuis l'arbre de minimisation (fonction récursive)
+*/
 void Automaton::getTable(element *el, element *current, vector< vector< vector<int> > > &table,  vector < vector< int > > &corres){
     
-    
+    //Si on est sur noeud avec des enfants alors on continue sur les enfants
     if(current->states.size() == 0){
         for(int i=0;i<current->els.size();i++){
             getTable(el, current->els[i], table, corres);
         }
         return;
     }
-        
+    
+    //On rajoute une ligne à notre table de transition et de correspondance
     table.push_back(vector< vector<int> >());
     corres.push_back(vector< int >());
     
+    //On rajoute le nom de tous nos état pour la table de correspondance
     for(int i=0;i<current->states.size();i++)
         corres[corres.size()-1].push_back(current->states[i]->getName());
     
+    //On rajoute nos transitions à la table de transition
     for(int j=0;j<this->symbols;j++){
-        table[table.size()-1].push_back(vector<int>());
         
+        table[table.size()-1].push_back(vector<int>());
         
         table[table.size()-1][j].push_back( findInElements( el, this->entries[0]->getState( current->states[0]->getTargets('a'+j)[0]) )->states[0]->getName() );
     }
     
 }
 
+
+/*
+* function : Affiche la table de transitions
+*/
 void Automaton::showTable(vector< vector< vector<int> > > &table){
     for(int i=0;i<table.size();i++){
         
@@ -566,12 +682,13 @@ void Automaton::showTable(vector< vector< vector<int> > > &table){
                 cout<<table[i][j][k]<<" ";
             
         }
-        
         cout <<"\n";
-        
     }
 }
 
+/*
+* function : Remplace la liste de toutes les transitions par le nouveau nom de l'état compris dans la table de correspondance
+*/
 void Automaton::sortTable(vector< vector< vector<int> > > &table, vector < vector< int > > &corres){
     
     for(int i=0;i<table.size();i++){
@@ -596,6 +713,9 @@ void Automaton::sortTable(vector< vector< vector<int> > > &table, vector < vecto
     
 }
 
+/*
+* function : Surcharge de l'opérateur de sortie
+*/
 ostream &operator<<(ostream& os, const Automaton& a){
     return os << State::showAll();
 }
