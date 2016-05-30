@@ -558,7 +558,8 @@ void Automaton::minimalize(){
         oldNameStateMinimalize.push_back(tmp);
         
         for(int j=0;j<table[i].size();j++){
-            addTransition(i, 'a'+j, table[i][j][0] );
+            if(table[i][j].size() >0)
+                addTransition(i, 'a'+j, table[i][j][0] );
         }
         
     }
@@ -615,6 +616,7 @@ void Automaton::minimalizeCompute(element *el, element *current){
     vector< element* > dest;
     bool found;
     vector< State* > tmp;
+    vector< int > tmp3;
     element * tmp2;
     int nberase;
     
@@ -626,8 +628,12 @@ void Automaton::minimalizeCompute(element *el, element *current){
         dest.clear();
         
         //On enregistre les transitions partant de notre première transition pour chaque symbole
-        for(int i=0;i<this->symbols;i++)
-            dest.push_back( findInElements(el, getState( current->states[0]->getTargets('a'+i)[0])) );
+        for(int i=0;i<this->symbols;i++){
+            tmp3.clear();
+            tmp3 = current->states[0]->getTargets('a'+i);
+            if(tmp3.size() > 0)
+                dest.push_back( findInElements(el, getState(tmp3[0])) );
+        }
         
         //On ajoute la première transition pour la déplacer quoi qu'il arrive
         tmp.push_back(current->states[0]);
@@ -638,7 +644,9 @@ void Automaton::minimalizeCompute(element *el, element *current){
         for(int i=1;i<current->states.size();i++){
             found = true;
             for(int j=0;j<this->symbols;j++){
-                if(findInElements(el, getState( current->states[i]->getTargets('a'+j)[0])) != dest[j])
+                tmp3.clear();
+                tmp3 = current->states[i]->getTargets('a'+j);
+                if(tmp3.size() > 0 && findInElements(el, getState( tmp3[0])) != dest[j])
                     found = false;
             }
             
@@ -741,6 +749,8 @@ void Automaton::getTable(element *el, element *current, vector< vector< vector<i
         return;
     }
     
+    vector< int > tmp;
+    
     //On rajoute une ligne à notre table de transition et de correspondance
     table.push_back(vector< vector<int> >());
     corres.push_back(vector< int >());
@@ -754,7 +764,10 @@ void Automaton::getTable(element *el, element *current, vector< vector< vector<i
         
         table[table.size()-1].push_back(vector<int>());
         
-        table[table.size()-1][j].push_back( findInElements( el, getState( current->states[0]->getTargets('a'+j)[0]) )->states[0]->getName() );
+        tmp.clear();
+        tmp = current->states[0]->getTargets('a'+j);
+        if(tmp.size() > 0)
+            table[table.size()-1][j].push_back( findInElements( el, getState( tmp[0]) )->states[0]->getName() );
     }
     
 }
@@ -910,7 +923,7 @@ string Automaton::showAll() const{
                 break;
         }
         
-        for(int j=0;j <pool[i]->getNbTransitions()-(int)pool[i]->hasAsync();j++){
+        for(int j=0;j <this->symbols-(int)pool[i]->hasAsync();j++){
             tmp = pool[i]->getTargetsNotAsync('a'+j);
             for(int k=0; k< tmp.size();k++)
                 os += string(1, 'a'+j) + " : " + patch::to_string(tmp[k]) + "  ";

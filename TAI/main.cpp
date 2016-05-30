@@ -70,6 +70,7 @@ int main(int argc, const char * argv[]) {
                 cout<<"- "<< tmp[i]<<endl;
             cout<<endl;
             a->determize();
+            a->complete();
             
         }
     }
