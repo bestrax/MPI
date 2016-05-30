@@ -14,25 +14,38 @@ using namespace std;
 
 int main(int argc, const char * argv[]) {
     
+    
+    //On déclare nos variables nécessaires
     FileManager file;
     Automaton *a = NULL;
+    string src = "";
     
-    a = file.load("exemples/a1.txt");
+    do{
+        
+        cout<<"Entrez le nom du fichier en relatif par rapport a l'executable sans l'extension .txt : ";
+        cin>>src;
+        //On charge l'automate
+        a = file.load(src+".txt");
+        
+        cout<<endl;
+        
+        if(!a)
+            cout<<"Erreur lors de la lecture."<<endl<<endl;
+        
+    }while(!a);
     
-    if(!a){
-        cout<<"Erreur lors de la lecture."<<endl<<endl;
-        exit(0);
-    }
-    
+    //On affiche l'automate et on procède aux vérifications et aux modifications
     cout<<"L'automate a la table de transition suivante : "<<endl<<endl<<*a<<endl;
     
     vector< int > tmp = a->isSynchronous();
     
+    //Vérification si l'automate est synchrone
     if(tmp.size() == 0){
         cout<<"L'automate est synchrone"<<endl<<endl;
         
         tmp = a->isDeter();
         
+        //Vérificaiton si l'automate est déterministe ou pas
         if(tmp.size() == 0){
             
             cout<<"L'automate est deterministe"<<endl<<endl;
@@ -40,12 +53,14 @@ int main(int argc, const char * argv[]) {
             if(tmp.size() == 0){
                 cout<<"L'automate est complet"<<endl<<endl;
             }else{
+                
                 cout<<"L'automate n'est pas complet car les etats suivants possedent au moins une transition manquante :"<<endl;
                 for(int i=0;i<tmp.size();i++)
                     cout<<"- "<< tmp[i]<<endl;
                 cout<<endl;
                 
                 a->complete();
+                
             }
             
         }else{
@@ -69,16 +84,17 @@ int main(int argc, const char * argv[]) {
     }
     
     
+    //On affiche l'automate déterministe complet et sa table de correspondance
     cout<<"L'automate deterministe complet possede la table de transition suivante :"<<endl<<endl<<*a<<endl;
     cout<<"Les etats ont ete renomes comme suit durant la determinisation :\n"<<endl<<a->getTableOldNameState()<<endl<<endl;
     
+    //On minimalise l'automate et on affiche sa table de correspondance
     a->minimalize();
-   
-
     cout<<"L'automate deterministe complet minimaliste possede la table de transition suivante :"<<endl<<endl<<*a<<endl;
-    
     cout<<"Les etats ont ete renomes comme suit durant la minimisation par rapport aux noms des etats de l'automate deterministe :\n"<<endl<<a->getTableOldNameStateMinimalize()<<endl<<endl;
     
+    
+    //On effectue la vérification de mots
     string strtest = "";
     short quit = 0;
     char e = 1;
@@ -112,25 +128,8 @@ int main(int argc, const char * argv[]) {
         
     }while(quit == 1);
 
-   /*
-    
-    cout<<"Reconnu ? : "<<a->isWordValid("a")<<endl;
-    
-    file.save(*a, "exemples/output.txt");
-    
-    
-    
-    
-    cout<<endl<<endl;
-    
-    a->minimalize();
-    
-    cout<<endl<<endl;
-    
-    cout<<*a<<endl;
-    
-    cout<<"Reconnu ? : "<<a->isWordValid("aba")<<endl;*/
-
+    //On pense à libérer la mémoire
+    delete a;
     
     return 0;
 }

@@ -569,6 +569,8 @@ void Automaton::minimalize(){
     for(int i=0;i<newExits.size();i++)
         addExit(newExits[i]);
     
+    
+    //On pense à libérer la mémoire prise par l'arbre de minimalisation
     deleteMinimalizeTree(el);
 }
 
