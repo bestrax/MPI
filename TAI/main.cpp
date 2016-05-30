@@ -78,6 +78,40 @@ int main(int argc, const char * argv[]) {
     cout<<"L'automate deterministe complet minimaliste possede la table de transition suivante :"<<endl<<endl<<*a<<endl;
     
     cout<<"Les etats ont ete renomes comme suit durant la minimisation par rapport aux noms des etats de l'automate deterministe :\n"<<endl<<a->getTableOldNameStateMinimalize()<<endl<<endl;
+    
+    string strtest = "";
+    short quit = 0;
+    char e = 1;
+    
+    do{
+    
+        strtest = "";
+        cout<<endl<<"Entrez le mot a tester : ";
+#ifdef __MINGW32__
+        fflush(stdin);
+#endif
+#ifdef __APPLE__
+        fpurge(stdin);
+#endif
+        e = 1;
+        strtest = "";
+        while(e != '\n' && e != '\0' && e != '\xff') {
+            e = getchar();
+            if(e != '\n' && e != '\0' && e != '\xff')
+                strtest += e;
+        }        
+        
+        if(a->isWordValid(strtest))
+            cout<<endl<<"Le mot est accepte";
+        else
+            cout<<endl<<"Le mot n'est pas accepte";
+        
+        cout<<endl<<"Voulez vous continuer a tester des mots (1: continuer, 0: quitter) : ";
+        cin>>quit;
+        
+        
+    }while(quit == 1);
+
    /*
     
     cout<<"Reconnu ? : "<<a->isWordValid("a")<<endl;

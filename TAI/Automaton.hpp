@@ -71,6 +71,7 @@ private:
     void showMinimalize(element &el);
     void minimalizeCompute(element *el, element *current);
     element* findInElements(element *el, State *a);
+    void deleteMinimalizeTree(element *el);
     void getTable(element *el, element *current, vector< vector< vector<int> > > &table,  vector < vector< int > > &corres);
     void showTable(vector< vector< vector<int> > > &table);
     void showTable(vector< vector< vector<int> > > &table, vector < vector< int > > &corres);

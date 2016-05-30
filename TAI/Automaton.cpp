@@ -21,8 +21,8 @@ Automaton::Automaton(int symbols){
 * function : Destructeur par défaut
 */
 Automaton::~Automaton(){
-    for(int i=0;i<entries.size();i++)
-        delete entries[i];
+    for(int i=0;i<pool.size();i++)
+        delete pool[i];
 }
 
 /*
@@ -145,12 +145,13 @@ bool Automaton::addTransition(int origin, char symbol, int destination){
     State* init = NULL, *dest = NULL;
     
     init = getState(origin);
-    dest = getState(destination);
     
     if(!init){
         init = new State(origin);
         pool.push_back(init);
     }
+    
+    dest = getState(destination);
     
     if(!dest){
         dest = new State(destination);
@@ -486,39 +487,48 @@ void Automaton::minimalize(){
     }
     
     //On définit nos variables temporaires
-    element el;
+    element *el = new element;
     string tmp;
     vector< vector< vector< int > > > table;
     vector < vector< int > > corres;
     vector< int > newExits;
+    vector< int > newEntries;
     
     //On divise nos états en deux parties sous forme d'un arbre :
     //Les états terminaux et les états non terminaux
     for(int i=0;i<pool.size();i++){
         if(find(this->exits.begin(), this->exits.end(), pool[i]) == this->exits.end()){
-            if(el.els.size() == 0)
-                el.els.push_back(new element);
+            if(el->els.size() == 0)
+                el->els.push_back(new element);
             
-            el.els[0]->states.push_back(pool[i]);
+            el->els[0]->states.push_back(pool[i]);
         }
         else{
-            if(el.els.size() == 0){
-                el.els.push_back(new element);
-                el.els.push_back(new element);
-            }else if(el.els.size() == 1){
-                el.els.push_back(new element);
+            if(el->els.size() == 0){
+                el->els.push_back(new element);
+                el->els.push_back(new element);
+            }else if(el->els.size() == 1){
+                el->els.push_back(new element);
             }
-            el.els[1]->states.push_back(pool[i]);
+            el->els[1]->states.push_back(pool[i]);
         }
     }
     
     //On lance la minimisation
-    minimalizeCompute(&el, &el);
+    minimalizeCompute(el, el);
     
     //On crée la table de transitions et la table avec les anciens noms (table de correspondance) à l'aide de
     //l'arbre créée lors de la minimisation
-    getTable(&el, &el, table, corres);
+    getTable(el, el, table, corres);
     sortTable(table, corres);
+    
+    //On sauvegarde les états d'entrés pour les trouver dans les nouveaux états
+    for(int i=0;i<entries.size();i++){
+        for(int j=0;j<corres.size();j++){
+            if(find(corres[j].begin(), corres[j].end(), entries[i]->getName()) != corres[j].end())
+                newEntries.push_back(j);
+        }
+    }
     
     //On sauvegarde les états de sorties pour les trouver dans les nouveaux états
     for(int i=0;i<exits.size();i++){
@@ -538,11 +548,8 @@ void Automaton::minimalize(){
     
     pool.clear();
     
-    //On ajoute les nouveaux états et les nouvelles transitions et on marque les états de sorties.
+    //On ajoute les nouveaux états et les nouvelles transitions et on marque les états de sorties et d'entrés
     for(int i=0;i<table.size();i++){
-        if(i == 0)
-            addEntry(0);
-        
         tmp = "";
         
         for(int j=0;j<corres[i].size();j++)
@@ -556,9 +563,13 @@ void Automaton::minimalize(){
         
     }
     
+    for(int i=0;i<newEntries.size();i++)
+        addEntry(newEntries[i]);
+    
     for(int i=0;i<newExits.size();i++)
         addExit(newExits[i]);
     
+    deleteMinimalizeTree(el);
 }
 
 
@@ -701,6 +712,18 @@ element* Automaton::findInElements(element *el, State *a){
     }
     
     return NULL;
+}
+
+/*
+ * function : Fonction qui détruit l'arbre de minimisation
+ */
+void Automaton::deleteMinimalizeTree(element *el){
+    
+    for(int i=0;i<el->els.size();i++){
+        deleteMinimalizeTree(el->els[i]);
+    }
+    
+    delete el;
 }
 
 /*
