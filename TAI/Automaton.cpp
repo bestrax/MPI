@@ -517,7 +517,9 @@ void Automaton::minimalize(){
     }
     
     //On lance la minimisation
-    minimalizeCompute(el, el);
+    do{
+        
+    }while(minimalizeCompute(el, el) > 0);
     
     //On crée la table de transitions et la table avec les anciens noms (table de correspondance) à l'aide de
     //l'arbre créée lors de la minimisation
@@ -600,18 +602,20 @@ void Automaton::showMinimalize(element &el){
 /*
 * function : Fonction récursive qui crée un arbre pour minimaliser un automate
 */
-void Automaton::minimalizeCompute(element *el, element *current){
+int Automaton::minimalizeCompute(element *el, element *current){
+    
+    int nbmodif = 0;
     
     //Si on est sur une feuille on quitte
     if(current->states.size() == 1)
-        return;
+        return 0;
     
     //Si on est sur un noeud alors on descend en récursif sur nos éléments enfants
     if(current->states.size() == 0){
         for(int i=0;i<current->els.size();i++){
-            minimalizeCompute(el, current->els[i]);
+            nbmodif += minimalizeCompute(el, current->els[i]);
         }
-        return;
+        return nbmodif;
     }
     
     //On définit nos variables temporaires
@@ -621,6 +625,7 @@ void Automaton::minimalizeCompute(element *el, element *current){
     vector< int > tmp3;
     element * tmp2 = NULL;
     int nberase;
+    
     
     //Tant que l'on traite des éléments on continue
     do{
@@ -659,6 +664,7 @@ void Automaton::minimalizeCompute(element *el, element *current){
         
         //Si on a une transition à déplacer on lefface et on l'ajoute en élément enfant de notre noeud courant
         if((tmp.size() != current->states.size() || current->els.size() > 0 ) && current->states.size() > 0){
+            nbmodif++;
             tmp2 = new element;
             nberase = 0;
             current->els.push_back(tmp2);
@@ -685,6 +691,7 @@ void Automaton::minimalizeCompute(element *el, element *current){
     //états dans un élément enfant
     
     if(current->els.size() > 0 && current->states.size() > 0){
+        nbmodif++;
         tmp2 = new element;
         current->els.push_back(tmp2);
         for(int i=0; i<current->states.size();i++){
@@ -702,7 +709,9 @@ void Automaton::minimalizeCompute(element *el, element *current){
     
     //On lance notre minimalisation en récursif pour nos éléments enfants
     for(int i=0;i<current->els.size();i++)
-        minimalizeCompute(el, current->els[i]);
+        nbmodif += minimalizeCompute(el, current->els[i]);
+    
+    return nbmodif;
     
 }
 

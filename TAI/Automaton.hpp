@@ -69,7 +69,7 @@ private:
     bool isInVector(vector<int> &a, int b);
     
     void showMinimalize(element &el);
-    void minimalizeCompute(element *el, element *current);
+    int minimalizeCompute(element *el, element *current);
     element* findInElements(element *el, State *a);
     void deleteMinimalizeTree(element *el);
     void getTable(element *el, element *current, vector< vector< vector<int> > > &table,  vector < vector< int > > &corres);
