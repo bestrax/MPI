@@ -188,6 +188,8 @@ bool Automaton::sortDecrease(int a, int b){
 */
 vector< int > Automaton::isDeter(){
     vector< int > tmp;
+    if(entries.size() > 1)
+        tmp.push_back(-2);
     for(int i=0;i<pool.size();i++){
         if(!pool[i]->isDeter())
             tmp.push_back(pool[i]->getName());

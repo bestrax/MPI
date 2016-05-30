@@ -65,6 +65,10 @@ int main(int argc, const char * argv[]) {
             
         }else{
             
+            if(tmp[0] == -2){
+                cout<<"L'automate n'est pas déterministe car il possède plusieurs entrées"<<endl<<endl;
+                tmp.erase(tmp.begin());
+            }
             cout<<"L'automate n'est pas déterministe car les etats suivants possedent plusieurs etats cibles pour une meme transition :"<<endl;
             for(int i=0;i<tmp.size();i++)
                 cout<<"- "<< tmp[i]<<endl;
