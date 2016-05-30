@@ -487,6 +487,7 @@ void Automaton::minimalize(){
     
     //On définit nos variables temporaires
     element el;
+    string tmp;
     vector< vector< vector< int > > > table;
     vector < vector< int > > corres;
     vector< int > newExits;
@@ -518,8 +519,6 @@ void Automaton::minimalize(){
     //l'arbre créée lors de la minimisation
     getTable(&el, &el, table, corres);
     sortTable(table, corres);
-    showTable(table);
-    
     
     //On sauvegarde les états de sorties pour les trouver dans les nouveaux états
     for(int i=0;i<exits.size();i++){
@@ -539,11 +538,17 @@ void Automaton::minimalize(){
     
     pool.clear();
     
-    
     //On ajoute les nouveaux états et les nouvelles transitions et on marque les états de sorties.
     for(int i=0;i<table.size();i++){
         if(i == 0)
             addEntry(0);
+        
+        tmp = "";
+        
+        for(int j=0;j<corres[i].size();j++)
+            tmp += patch::to_string(corres[i][j]) + (j==corres[i].size()-1?"":", ");
+        
+        oldNameStateMinimalize.push_back(tmp);
         
         for(int j=0;j<table[i].size();j++){
             addTransition(i, 'a'+j, table[i][j][0] );
@@ -554,6 +559,26 @@ void Automaton::minimalize(){
     for(int i=0;i<newExits.size();i++)
         addExit(newExits[i]);
     
+}
+
+
+/*
+* function : Affiche l'automate depuis l'arbre de minimalisation
+*/
+void Automaton::showMinimalize(element &el){
+    
+    vector< vector< vector< int > > > table;
+    vector < vector< int > > corres;
+    
+    cout<<"Etape de minimisation : "<<endl<<endl;
+    
+    //On crée la table de transitions et la table avec les anciens noms (table de correspondance) à l'aide de
+    //l'arbre créée lors de la minimisation
+    getTable(&el, &el, table, corres);
+    sortTable(table, corres);
+    showTable(table, corres);
+    
+    cout<<endl<<endl<<endl;
 }
 
 /*
@@ -628,6 +653,9 @@ void Automaton::minimalizeCompute(element *el, element *current){
         }
         
     }while((tmp.size() != current->states.size() || tmp.size() == 1 ) && current->states.size() > 0);
+    
+    //On affiche la partition actuelle
+    showMinimalize((*el));
     
     //Si on on a des éléments enfants mais aussi des états alors on met les
     //états dans un élément enfant
@@ -728,6 +756,30 @@ void Automaton::showTable(vector< vector< vector<int> > > &table){
 }
 
 /*
+ * function : Affiche la table de transitions à l'aide de la table de correspondance
+ */
+void Automaton::showTable(vector< vector< vector<int> > > &table, vector < vector< int > > &corres){
+    
+    for(int i=0;i<table.size();i++){
+        
+        cout<<corres[i][0];
+        for(int l=1;l<corres[i].size();l++)
+            cout<<", "<<corres[i][l];
+        cout<<" | ";
+        
+        for(int j=0;j<table[i].size();j++){
+            
+            cout<<(char)('a'+j)<<" : ";
+            
+            for(int k=0;k< table[i][j].size();k++)
+                cout<<table[i][j][k]<<" ";
+            
+        }
+        cout <<"\n";
+    }
+}
+
+/*
 * function : Remplace la liste de toutes les transitions par le nouveau nom de l'état compris dans la table de correspondance
 */
 void Automaton::sortTable(vector< vector< vector<int> > > &table, vector < vector< int > > &corres){
@@ -778,11 +830,28 @@ short Automaton::typeState(State *a) const{
     return tmp;
 }
 
+/*
+* function : Affiche la table de correspondance entre l'automate non deterministe
+             et l'automate deterministe
+*/
 string Automaton::getTableOldNameState() const{
     string os;
     
     for(int i=0;i<oldNameState.size();i++)
         os += patch::to_string(i) + " : " + oldNameState[i] + "\n";
+    
+    return os;
+}
+
+/*
+ * function : Affiche la table de correspondance entre l'automate deterministe
+              et l'automate minimal
+ */
+string Automaton::getTableOldNameStateMinimalize() const{
+    string os;
+    
+    for(int i=0;i<oldNameStateMinimalize.size();i++)
+        os += patch::to_string(i) + " : " + oldNameStateMinimalize[i] + "\n";
     
     return os;
 }

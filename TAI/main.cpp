@@ -70,13 +70,14 @@ int main(int argc, const char * argv[]) {
     
     
     cout<<"L'automate deterministe complet possede la table de transition suivante :"<<endl<<endl<<*a<<endl;
-    cout<<"Les etats ont ete renomes comme suit durant la determinisation :\n"<<a->getTableOldNameState()<<endl<<endl;
+    cout<<"Les etats ont ete renomes comme suit durant la determinisation :\n"<<endl<<a->getTableOldNameState()<<endl<<endl;
     
     a->minimalize();
-    
    
 
-    cout<<*a<<endl;
+    cout<<"L'automate deterministe complet minimaliste possede la table de transition suivante :"<<endl<<endl<<*a<<endl;
+    
+    cout<<"Les etats ont ete renomes comme suit durant la minimisation par rapport aux noms des etats de l'automate deterministe :\n"<<endl<<a->getTableOldNameStateMinimalize()<<endl<<endl;
    /*
     
     cout<<"Reconnu ? : "<<a->isWordValid("a")<<endl;

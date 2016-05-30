@@ -48,6 +48,7 @@ public:
     void minimalize();
     short typeState(State *a) const;
     string getTableOldNameState() const;
+    string getTableOldNameStateMinimalize() const;
     string showAll() const;
     
     friend ostream &operator<<(ostream& os, const Automaton& a);
@@ -59,6 +60,7 @@ private:
     vector< State* > entries;
     vector< State* > exits;
     vector<string> oldNameState;
+    vector<string> oldNameStateMinimalize;
     vector< State* > pool;
 
     int determizeGetNewName(vector<string> &a, vector<int> &b);
@@ -66,10 +68,12 @@ private:
     void determinizeUnique(vector<int> &a);
     bool isInVector(vector<int> &a, int b);
     
+    void showMinimalize(element &el);
     void minimalizeCompute(element *el, element *current);
     element* findInElements(element *el, State *a);
     void getTable(element *el, element *current, vector< vector< vector<int> > > &table,  vector < vector< int > > &corres);
     void showTable(vector< vector< vector<int> > > &table);
+    void showTable(vector< vector< vector<int> > > &table, vector < vector< int > > &corres);
     void sortTable(vector< vector< vector<int> > > &table, vector < vector< int > > &corres);
 
 
