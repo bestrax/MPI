@@ -163,13 +163,14 @@ bool Automaton::addTransition(int origin, char symbol, int destination){
 /*
 * function : On teste si l'automate est synchrone
 */
-bool Automaton::isSynchronous(){
+vector< int > Automaton::isSynchronous(){
+    vector< int > tmp;
     for(int i=0;i<pool.size();i++){
         if(pool[i]->hasAsync())
-            return false;
+            tmp.push_back(pool[i]->getName());
     }
     
-    return true;
+    return tmp;
 }
 
 /*
@@ -384,23 +385,24 @@ bool Automaton::isInVector(vector<int> &a, int b){
 /*
 * function : Vérifie si l'automate est complet
 */
-bool Automaton::isComplete()
+vector< int > Automaton::isComplete()
 {
     if(entries.size() == 0)
     {
         cout<<"L'automate ne possede pas d'entree"<<endl;
-        return false;
+        return vector< int >();
     }
     
+    vector< int > tmp;
     
     //On vérifie que chaque état dispose de toutes ses transitions
     for(int i = 0;i<pool.size(); i++)
     {
         if(pool[i]->enoughTransitions(this->symbols).size() != 0)
-            return false;
+            tmp.push_back(pool[i]->getName());
     }
     
-    return true;
+    return tmp;
 }
 
 /*
@@ -514,7 +516,7 @@ void Automaton::minimalize(){
     //l'arbre créée lors de la minimisation
     getTable(&el, &el, table, corres);
     sortTable(table, corres);
-    //showTable(table);
+    showTable(table);
     
     
     //On sauvegarde les états de sorties pour les trouver dans les nouveaux états
@@ -585,7 +587,7 @@ void Automaton::minimalizeCompute(element *el, element *current){
         
         //On enregistre les transitions partant de notre première transition pour chaque symbole
         for(int i=0;i<this->symbols;i++)
-            dest.push_back( findInElements(el, getState( this->entries[0]->getTargets('a'+i)[0])) );
+            dest.push_back( findInElements(el, getState( current->states[0]->getTargets('a'+i)[0])) );
         
         //On ajoute la première transition pour la déplacer quoi qu'il arrive
         tmp.push_back(current->states[0]);
@@ -606,7 +608,7 @@ void Automaton::minimalizeCompute(element *el, element *current){
         }
         
         //Si on a une transition à déplacer on lefface et on l'ajoute en élément enfant de notre noeud courant
-        if(tmp.size() != current->states.size()){
+        if((tmp.size() != current->states.size() || tmp.size() == 1 ) && current->states.size() > 0){
             tmp2 = new element;
             nberase = 0;
             current->els.push_back(tmp2);
@@ -623,7 +625,7 @@ void Automaton::minimalizeCompute(element *el, element *current){
             }
         }
         
-    }while(tmp.size() != current->states.size());
+    }while((tmp.size() != current->states.size() || tmp.size() == 1 ) && current->states.size() > 0);
     
     //Si on on a des éléments enfants mais aussi des états alors on met les
     //états dans un élément enfant

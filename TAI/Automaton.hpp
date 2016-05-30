@@ -38,11 +38,11 @@ public:
     int getNbTransitions();
     vector< vector<int> > getAllTransitions();
     bool addTransition(int origin, char symbol, int destination);
-    bool isSynchronous();
+    vector< int > isSynchronous();
     static bool sortDecrease(int a, int b);
     vector< int > isDeter();
     void determize();
-    bool isComplete();
+    vector< int > isComplete();
     void complete();
     bool isWordValid(string a);
     void minimalize();

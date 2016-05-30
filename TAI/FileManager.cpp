@@ -24,8 +24,10 @@ Automaton* FileManager::load(string const src){
     int origin, destination, nbSymb, nbState, nbTrans, temp;
     char symbol;
     
-    if(!file)
+    if(!file){
+        cout<<"Impossible de lire le fichier : "<<src<<endl<<endl;
         return NULL;
+    }
     
     //On récupère le nombre de symboles, d'états et le nombre d'états d'origines
     file >> nbSymb;
@@ -96,8 +98,10 @@ bool FileManager::save(Automaton &a, string const src){
     vector<vector<int>> transitions;
     ofstream file(src);
     
-    if(!file)
+    if(!file){
+        cout<<"Impossible d'ecrire dans le fichier : "<<src<<endl<<endl;
         return false;
+    }
     
     //On sauvegarde le nombre de symboles, d'états
     file<< a.getSymbols()<<endl;
