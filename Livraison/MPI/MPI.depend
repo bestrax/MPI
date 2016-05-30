@@ -1,0 +1,35 @@
+# depslib dependency file v1.0
+1464634824 source:y:\documents\cours\semestre 4\mathématique pour l'informatique\tai\tai\livraison\robert-henique-amghar-guettat-eltanahi-automaton.cpp
+	"ROBERT-HENIQUE-AMGHAR-GUETTAT-ELTANAHI-Automaton.hpp"
+
+1464634850 y:\documents\cours\semestre 4\mathématique pour l'informatique\tai\tai\livraison\robert-henique-amghar-guettat-eltanahi-automaton.hpp
+	<stdio.h>
+	<vector>
+	<iostream>
+	<algorithm>
+	<set>
+	<string>
+	"ROBERT-HENIQUE-AMGHAR-GUETTAT-ELTANAHI-State.hpp"
+
+1464635680 y:\documents\cours\semestre 4\mathématique pour l'informatique\tai\tai\livraison\robert-henique-amghar-guettat-eltanahi-state.hpp
+	<stdio.h>
+	<iostream>
+	<algorithm>
+	<string>
+	<vector>
+	<sstream>
+
+1464635092 source:y:\documents\cours\semestre 4\mathématique pour l'informatique\tai\tai\livraison\robert-henique-amghar-guettat-eltanahi-filemanager.cpp
+	"ROBERT-HENIQUE-AMGHAR-GUETTAT-ELTANAHI-FileManager.hpp"
+
+1464635092 y:\documents\cours\semestre 4\mathématique pour l'informatique\tai\tai\livraison\robert-henique-amghar-guettat-eltanahi-filemanager.hpp
+	<stdio.h>
+	<iostream>
+	<fstream>
+	<string>
+	"ROBERT-HENIQUE-AMGHAR-GUETTAT-ELTANAHI-Automaton.hpp"
+
+1464634836 source:y:\documents\cours\semestre 4\mathématique pour l'informatique\tai\tai\livraison\robert-henique-amghar-guettat-eltanahi-main.cpp
+	<iostream>
+	"ROBERT-HENIQUE-AMGHAR-GUETTAT-ELTANAHI-FileManager.hpp"
+
