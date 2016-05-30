@@ -76,8 +76,8 @@ int main(int argc, const char * argv[]) {
     
    
 
-   /* cout<<*a<<endl;
-    
+    cout<<*a<<endl;
+   /*
     
     cout<<"Reconnu ? : "<<a->isWordValid("a")<<endl;
     

@@ -147,8 +147,10 @@ bool Automaton::addTransition(int origin, char symbol, int destination){
     init = getState(origin);
     dest = getState(destination);
     
-    if(!init)
-        return false;
+    if(!init){
+        init = new State(origin);
+        pool.push_back(init);
+    }
     
     if(!dest){
         dest = new State(destination);
@@ -544,7 +546,7 @@ void Automaton::minimalize(){
             addEntry(0);
         
         for(int j=0;j<table[i].size();j++){
-            addTransition(i, 'a'+j, determizeGetNewName(oldNameState, table[i][j]) );
+            addTransition(i, 'a'+j, table[i][j][0] );
         }
         
     }
