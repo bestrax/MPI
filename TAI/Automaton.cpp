@@ -243,7 +243,7 @@ void Automaton::determize(){
             name[j].push_back(manipulate[i]->getName());
             
             for(int k=0;k<exits.size();k++){
-                if(manipulate[i]->getName() == exits[k]->getName() && !isInVector(newExits, i)){
+                if(manipulate[i] == exits[k] && !isInVector(newExits, j)){
                     newExits.push_back(j);
                     add = true;
                 }
@@ -617,7 +617,7 @@ void Automaton::minimalizeCompute(element *el, element *current){
     bool found;
     vector< State* > tmp;
     vector< int > tmp3;
-    element * tmp2;
+    element * tmp2 = NULL;
     int nberase;
     
     //Tant que l'on traite des éléments on continue
@@ -656,7 +656,7 @@ void Automaton::minimalizeCompute(element *el, element *current){
         }
         
         //Si on a une transition à déplacer on lefface et on l'ajoute en élément enfant de notre noeud courant
-        if((tmp.size() != current->states.size() || tmp.size() == 1 ) && current->states.size() > 0){
+        if((tmp.size() != current->states.size() || current->els.size() > 0 ) && current->states.size() > 0){
             tmp2 = new element;
             nberase = 0;
             current->els.push_back(tmp2);
@@ -668,12 +668,13 @@ void Automaton::minimalizeCompute(element *el, element *current){
                     if(current->states[j] == tmp[i]){
                         current->states.erase(current->states.begin()+j-nberase);
                         nberase++;
+                        j -= nberase;
                     }
                 }
             }
         }
         
-    }while((tmp.size() != current->states.size() || tmp.size() == 1 ) && current->states.size() > 0);
+    }while((tmp.size() != current->states.size() || current->els.size() > 0 ) && current->states.size() > 0);
     
     //On affiche la partition actuelle
     showMinimalize((*el));
@@ -742,7 +743,7 @@ void Automaton::deleteMinimalizeTree(element *el){
 void Automaton::getTable(element *el, element *current, vector< vector< vector<int> > > &table,  vector < vector< int > > &corres){
     
     //Si on est sur noeud avec des enfants alors on continue sur les enfants
-    if(current->states.size() == 0){
+    if(current->els.size() > 0){
         for(int i=0;i<current->els.size();i++){
             getTable(el, current->els[i], table, corres);
         }
